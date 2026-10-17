@@ -19,13 +19,13 @@
   /* WhatsApp number: international format, + or 00, then 9 to 15 digits */
   const waOk = v => { const t = String(v).trim(); if (!/^(\+|00)/.test(t) || /[^\d\s+()-]/.test(t)) return false; const d = t.replace(/^00/, '').replace(/\D/g, ''); return d.length >= 9 && d.length <= 15; };
 
-  if (hasGsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (hasGsap && window.ScrollTrigger) { gsap.registerPlugin(ScrollTrigger); ScrollTrigger.config({ ignoreMobileResize: true }); }
   if (hasGsap && window.SplitText) gsap.registerPlugin(SplitText);
 
   /* ---------- smooth scroll ---------- */
   let lenis = null;
   if (!reduce && typeof window.Lenis !== 'undefined') {
-    lenis = new Lenis({ lerp: 0.07, duration: 1.4, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.2 });
+    lenis = new Lenis({ lerp: 0.08, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.2 });
     if (hasGsap) {
       if (window.ScrollTrigger) lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(t => lenis.raf(t * 1000));
@@ -171,7 +171,9 @@
       const img = fig.querySelector('img'); if (!img) return;
       const lens = document.createElement('div'); lens.className = 'lens'; lens.setAttribute('aria-hidden', 'true'); fig.appendChild(lens);
       const Z = 2.1, R = 95;
-      let geo = null;
+      const lx = gsap.quickSetter(lens, 'x', 'px'), ly = gsap.quickSetter(lens, 'y', 'px');
+      gsap.set(lens, { xPercent: -50, yPercent: -50, scale: 0.5, opacity: 0 });
+      let geo = null, fr = null;
       const measure = () => {
         const nw = img.naturalWidth, nh = img.naturalHeight; if (!nw) return null;
         const ir = img.getBoundingClientRect();
@@ -181,15 +183,19 @@
       };
       fig.addEventListener('pointerenter', () => {
         geo = measure(); if (!geo) return;
+        fr = fig.getBoundingClientRect();
         lens.style.backgroundImage = `url("${img.currentSrc || img.src}")`;
         lens.style.backgroundSize = `${geo.dw * Z}px ${geo.dh * Z}px`;
         fig.classList.add('is-lens');
+        gsap.to(lens, { opacity: 1, scale: 1, duration: 0.55, ease: 'expo.out', overwrite: 'auto' });
       });
-      fig.addEventListener('pointerleave', () => fig.classList.remove('is-lens'));
+      fig.addEventListener('pointerleave', () => {
+        fig.classList.remove('is-lens');
+        gsap.to(lens, { opacity: 0, scale: 0.5, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
+      });
       fig.addEventListener('pointermove', e => {
-        if (!geo) return;
-        const fr = fig.getBoundingClientRect();
-        lens.style.left = (e.clientX - fr.left) + 'px'; lens.style.top = (e.clientY - fr.top) + 'px';
+        if (!geo || !fr) return;
+        lx(e.clientX - fr.left); ly(e.clientY - fr.top);
         const u = e.clientX - geo.ir.left - geo.ox, v = e.clientY - geo.ir.top - geo.oy;
         lens.style.backgroundPosition = `${R - u * Z}px ${R - v * Z}px`;
       });
@@ -199,7 +205,9 @@
   /* ---------- section to section colour, clip reveals, parallax ---------- */
   if (hasGsap && window.ScrollTrigger && !reduce) {
     const main = $('main');
-    const tint = c => gsap.to(main, { backgroundColor: c, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+    const tintEl = document.createElement('div'); tintEl.className = 'tint'; tintEl.setAttribute('aria-hidden', 'true');
+    main.append(tintEl); document.documentElement.classList.add('has-tint');
+    const tint = c => gsap.to(tintEl, { backgroundColor: c, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
     const tinted = $$('[data-bg]');
     tinted.forEach((sec, i) => ScrollTrigger.create({
       trigger: sec, start: 'top 60%', end: 'bottom 60%',
@@ -230,6 +238,7 @@
       const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
       const h = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: {
         trigger: pin, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 1, invalidateOnRefresh: true,
+        onToggle: s => pin.classList.toggle('is-active', s.isActive),
         onUpdate: s => { setCur(1 + Math.round(s.progress * (panels.length - 1))); if (bar) bar.style.transform = `scaleX(${s.progress})`; }
       } });
       const vw = window.innerWidth;
@@ -283,8 +292,10 @@
     const path = $('.foot__sky path', foot);
     const len = path.getTotalLength();
     gsap.set(path, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
+    foot.classList.add('foot-gated');
     footTl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
-      trigger: fits ? spacer : foot, start: fits ? 'top bottom' : 'top 85%', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true
+      trigger: fits ? spacer : foot, start: fits ? 'top bottom' : 'top 85%', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
+      onUpdate: s => foot.classList.toggle('is-on', s.progress > 0), onToggle: s => foot.classList.toggle('is-on', s.isActive || s.progress > 0)
     } })
       .fromTo(inner, { yPercent: fits ? -22 : 0 }, { yPercent: 0, duration: 1 }, 0)
       .fromTo('.foot__sun', { yPercent: 55, scale: 0.6 }, { yPercent: 0, scale: 1, duration: 1 }, 0)

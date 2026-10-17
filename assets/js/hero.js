@@ -10,7 +10,7 @@
   const ctx = cv.getContext('2d');
   const COLS = ['rgb(227,197,138)', 'rgb(246,232,206)', 'rgb(176,140,86)'];
   const SKY = 0.54; // progress at which the skyline is fully formed
-  let W = 0, H = 0, dpr = 1, P = [], prog = 0, intro = { v: 0 }, scrollP = 0, visible = true, mx = -9999, my = -9999, builtW = 0, small = false, dot = 1;
+  let W = 0, H = 0, dpr = 1, P = [], prog = 0, intro = { v: 0 }, scrollP = 0, visible = true, mx = -9999, my = -9999, px = -1, py = -1, builtW = 0, small = false, dot = 1;
   const caption = document.querySelector('.hero__caption');
   const ease = t => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
 
@@ -44,12 +44,12 @@
     caption.style.bottom = 'auto';
   }
   function build() {
-    dpr = Math.min(2, window.devicePixelRatio || 1);
+    dpr = Math.min(1.5, window.devicePixelRatio || 1); // 1.5x is indistinguishable for 1-2px points and ~44% fewer pixels than 2x
     const w = cv.offsetWidth, h = cv.offsetHeight; if (!w || !h) return;
     builtW = w;
     W = cv.width = Math.round(w * dpr); H = cv.height = Math.round(h * dpr);
     small = w < 600; dot = small ? 1.5 : 1;
-    const n = Math.round(Math.min(6000, Math.max(small ? 3400 : 2000, (w * h) / 200)));
+    const n = Math.round(Math.min(4800, Math.max(small ? 2600 : 2000, (w * h) / 260)));
     const desk = w >= 900;
     const sk = samplePoints(x => {
       /* desktop: the skyline sits right of the text column and ends inside the page gutter */
@@ -73,6 +73,7 @@
 
   function draw(still) {
     if (!P.length) return;
+    if (px >= 0 && !still) { const r = cv.getBoundingClientRect(); mx = px - r.left; my = py - r.top; }
     const target = still ? SKY : Math.max(intro.v, scrollP > 0.001 ? SKY + (1 - SKY) * scrollP : 0);
     prog = still ? target : prog + (target - prog) * 0.09;
     ctx.clearRect(0, 0, W, H);
@@ -103,7 +104,7 @@
     ctx.globalCompositeOperation = 'source-over';
   }
   LH.hero = { get prog() { return prog; }, get n() { return P.length; } };
-  function loop() { requestAnimationFrame(loop); if (visible) draw(false); }
+  const frame = () => { if (visible && !document.hidden) draw(false); };
 
   const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
   let settled = false;
@@ -113,9 +114,10 @@
     if (reduce) return;
     fontsReady.then(retarget);
     new IntersectionObserver(en => { visible = en[en.length - 1].isIntersecting; }).observe(cv);
-    window.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; }, { passive: true });
-    cv.parentElement.addEventListener('pointerleave', () => { mx = my = -9999; });
-    requestAnimationFrame(loop);
+    window.addEventListener('pointermove', e => { px = e.clientX; py = e.clientY; }, { passive: true });
+    cv.parentElement.addEventListener('pointerleave', () => { px = py = -1; mx = my = -9999; });
+    /* one loop for the page: the particles tick with gsap (same rAF as Lenis and ScrollTrigger) */
+    if (hasGsap) gsap.ticker.add(frame); else { const loop = () => { requestAnimationFrame(loop); frame(); }; requestAnimationFrame(loop); }
 
     if (hasGsap) {
       gsap.to(intro, { v: SKY, duration: 3, ease: 'power2.out', delay: 0.15 });
