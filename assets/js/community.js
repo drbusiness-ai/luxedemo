@@ -35,7 +35,7 @@
     const years = ['2022', '2023', '2024', '2025', '2026'];
     const last = pts[pts.length - 1];
     host.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="Line chart: illustrative average apartment price per sq ft in Business Bay, rising from AED 1,320 in Q1 2022 to AED 2,430 in Q3 2026.">
-      <defs><linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d29a6c" stop-opacity=".26"/><stop offset="1" stop-color="#d29a6c" stop-opacity="0"/></linearGradient></defs>
+      <defs><linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c9a46a" stop-opacity=".26"/><stop offset="1" stop-color="#c9a46a" stop-opacity="0"/></linearGradient></defs>
       <g class="grid">${ticks.map(t => `<line x1="${m.l}" x2="${m.l + iw}" y1="${y(t)}" y2="${y(t)}"/>`).join('')}</g>
       <g class="axis">${ticks.map(t => `<text x="${m.l - 10}" y="${y(t) + 4}" text-anchor="end">${fmt(t)}</text>`).join('')}
         ${years.map(yr => { const i = DATA.findIndex(d => d[0].endsWith(yr)); return `<text x="${i === 0 ? x(i) + 6 : x(i)}" y="${h - 8}" text-anchor="${i === 0 ? 'start' : 'middle'}">${yr}</text>`; }).join('')}</g>

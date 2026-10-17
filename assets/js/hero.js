@@ -8,7 +8,7 @@
   const { skylineD, samplePoints, reduce } = LH;
   const hasGsap = typeof window.gsap !== 'undefined';
   const ctx = cv.getContext('2d');
-  const COLS = ['rgb(226,170,120)', 'rgb(243,220,192)', 'rgb(196,128,84)'];
+  const COLS = ['rgb(227,197,138)', 'rgb(246,232,206)', 'rgb(176,140,86)'];
   const SKY = 0.54; // progress at which the skyline is fully formed
   let W = 0, H = 0, dpr = 1, P = [], prog = 0, intro = { v: 0 }, scrollP = 0, visible = true, mx = -9999, my = -9999, builtW = 0, small = false, dot = 1;
   const caption = document.querySelector('.hero__caption');
@@ -119,7 +119,21 @@
 
     if (hasGsap) {
       gsap.to(intro, { v: SKY, duration: 3, ease: 'power2.out', delay: 0.15 });
-      gsap.from('.hero__title .line > span', { yPercent: 115, rotate: 2, duration: 1.3, ease: 'expo.out', stagger: 0.1, delay: 0.2 });
+      /* headline: characters rise out of each masked line */
+      let chars = null;
+      if (window.SplitText) { try { chars = new SplitText('.hero__title .line > span', { type: 'words,chars', charsClass: 'ch' }).chars; } catch (e) { chars = null; } }
+      if (chars && chars.length) gsap.from(chars, { yPercent: 120, rotate: 4, opacity: 0, duration: 1.25, ease: 'expo.out', stagger: { each: 0.02, from: 'start' }, delay: 0.25 });
+      else gsap.from('.hero__title .line > span', { yPercent: 115, rotate: 2, duration: 1.3, ease: 'expo.out', stagger: 0.1, delay: 0.2 });
+      /* pointer parallax: the light pool and the copy drift apart */
+      const glow = document.querySelector('.hero__glow');
+      if (glow && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        const gx = gsap.quickTo(glow, 'x', { duration: 1.2, ease: 'power3' }), gy = gsap.quickTo(glow, 'y', { duration: 1.2, ease: 'power3' });
+        const cx = gsap.quickTo('.hero__copy', 'x', { duration: 1.4, ease: 'power3' }), cy = gsap.quickTo('.hero__copy', 'y', { duration: 1.4, ease: 'power3' });
+        cv.parentElement.addEventListener('pointermove', e => {
+          const px = e.clientX / window.innerWidth - 0.5, py = e.clientY / window.innerHeight - 0.5;
+          gx(px * 90); gy(py * 60); cx(px * -14); cy(py * -10);
+        }, { passive: true });
+      }
       gsap.from('.hero__eyebrow, .hero__sub, .hero__ctas, .hero__proof', { opacity: 0, y: 24, duration: 1.1, ease: 'power3.out', stagger: 0.1, delay: 0.45 });
       gsap.from('.nav > *', { opacity: 0, y: -16, duration: 1, ease: 'power3.out', stagger: 0.06, delay: 0.2 });
       if (window.ScrollTrigger) {
@@ -128,10 +142,12 @@
           defaults: { ease: 'none' },
           scrollTrigger: { trigger: '.hero', start: 'top top', end: () => '+=' + Math.round(window.innerHeight * (desk() ? 0.95 : 0.7)), pin: true, scrub: 0.6, invalidateOnRefresh: true, onUpdate: s => { scrollP = s.progress; } }
         })
-          .to('.hero__copy', { opacity: 0, y: -70, duration: 0.32, ease: 'power2.in' }, 0)
+          .to('.hero__copy', { opacity: 0, yPercent: -30, duration: 0.32, ease: 'power2.in' }, 0)
           .to('.hero__veil', { opacity: 0.35, duration: 0.4 }, 0)
+          .fromTo('.hero__glow', { yPercent: 0, scale: 1 }, { yPercent: -28, scale: 1.25, duration: 1 }, 0)
           .fromTo('.hero__caption', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.18 }, 0.76)
           .to({}, { duration: 0.06 }, 0.94);
+        ScrollTrigger.sort(); // the hero pin may be created after the showcase pin; keep start positions in page order
         ScrollTrigger.refresh();
       }
     } else {

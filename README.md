@@ -5,7 +5,7 @@ It uses plain HTML, CSS and vanilla JavaScript with no build step, and makes no 
 No form or chat message is sent anywhere.
 
 - Language: English only for this preview. NYLA's language chips show how the live assistant greets in Arabic, Russian, Hindi and Chinese.
-- Every page carries a small dashed "Preview" tag in the header, a "Preview build, for presentation" line in the footer, and a `noindex` robots meta. `vercel.json` also sends an `X-Robots-Tag: noindex` header.
+- Every page carries a "Preview build, for presentation" line in the footer legal row and a `noindex` robots meta. `vercel.json` also sends an `X-Robots-Tag: noindex` header.
 
 ## Run it
 
@@ -13,7 +13,7 @@ No form or chat message is sent anywhere.
 - **On Vercel:** deploy this folder as a static project with no framework and no build command.
   - `vercel.json` turns on `cleanUrls`, so `/true-cost-calculator` works, and caches `/assets/*` for a year.
   - `.vercelignore` keeps `qa/` and this README out of the deployment.
-- **Cache busting:** CSS and JS are linked with `?v=20261017-2`. Bump that string in every page when either file changes (assets are cached for a year).
+- **Cache busting:** CSS and JS are linked with `?v=20261017-3`. Bump that string in every page when either file changes (assets are cached for a year).
   - Images in `assets/img/` are not versioned, so give a changed image a new file name.
 
 ## Pages
@@ -29,7 +29,7 @@ No form or chat message is sent anywhere.
 
 ### Sitewide
 
-- **Header:** sticky nav with active-page marking, a "Preview" tag, a mobile menu with "Talk to an advisor" and "WhatsApp us" buttons, and a "Talk to an advisor" button that opens NYLA.
+- **Header:** sticky nav with active-page marking, a mobile menu with "Talk to an advisor" and "WhatsApp us" buttons, and a "Talk to an advisor" button that opens NYLA.
 - **Footer:** contact details, live Dubai clock (GST), tool links, licence and regulation block, privacy link and an animated skyline line drawing. On the calculator page the main footer button is "Send me this breakdown"; elsewhere it is "Calculate your true cost".
 - **NYLA:** a WhatsApp-style assistant on every page.
   - It opens from the launcher or from any "Talk to an advisor" button.
