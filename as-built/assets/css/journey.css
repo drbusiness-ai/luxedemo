@@ -222,8 +222,10 @@ html:not(.js) .journey__caption,.jr-static .journey__caption,.jr-poster .journey
   .ch--04 .ch__label,.ch--04 .ch__serif{color:#F7CFDF;text-shadow:0 0 2px rgba(7,11,28,.6),0 0 16px rgba(7,11,28,.45)}
   .ch--04 .ch__label{color:var(--porcelain,#F1ECE3)}
   .ch--04 .ch__label,.ch--04 .ch__readout{text-shadow:0 0 2px rgba(7,11,28,.8),0 0 10px rgba(7,11,28,.62),0 0 24px rgba(7,11,28,.4)}
-  /* 03 (bright haze) and 05 (lit dusk sky) labels sit above the phone scrim: a firmer halo keeps the 11.5px mono at 4.5:1 */
-  .ch--03 .ch__label,.ch--05 .ch__label{text-shadow:0 0 2px rgba(7,11,28,.85),0 0 9px rgba(7,11,28,.72),0 0 22px rgba(7,11,28,.5)}
+  /* 03 (bright haze) and 05 (the warm horizon showing between the towers) put the 11.5px mono label on the brightest
+     band of the phone frame: a firmer halo, and the label sits on a soft Ink pad (a blurred rounded rect hugging it) */
+  .ch--03 .ch__label,.ch--05 .ch__label{position:relative;isolation:isolate;width:fit-content;text-shadow:0 0 2px rgba(7,11,28,.85),0 0 9px rgba(7,11,28,.72),0 0 22px rgba(7,11,28,.5)}
+  .ch--03 .ch__label::after,.ch--05 .ch__label::after{content:"";position:absolute;inset:-7px -14px -7px -10px;z-index:-1;border-radius:12px;background:rgba(7,11,28,.58);filter:blur(9px);pointer-events:none}
   .ch__serif{font-size:clamp(24px,7vw,32px)}
   .ch__body{margin-top:16px;font-size:15.5px;line-height:1.55}
   .ch__ctas{margin-top:22px}

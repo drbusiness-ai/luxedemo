@@ -655,6 +655,9 @@
         if (formsOnScreen.size) hideTeaser(); else tryShow();
       }, { threshold: 0 });
       $$('.form, .leadgrid, .sendbox, .ctaband').forEach(f => fo.observe(f));
+      /* on phones the journey copy fills the screen, so the teaser waits until the pin is over */
+      const journey = $('.journey');
+      if (journey && matchMedia('(max-width: 760px)').matches) fo.observe(journey);
       document.addEventListener('focusin', e => { if (e.target.closest && e.target.closest('form') && e.target.matches('input,select,textarea')) hideTeaser(); });
       document.addEventListener('focusout', () => setTimeout(tryShow, 50));
       if (!store.get('lh-nyla-seen')) setTimeout(() => { if (!store.get('lh-nyla-seen')) { due = true; tryShow(); } }, 7000);

@@ -115,6 +115,7 @@ async function contrast(page, rootSel) {
   await page.addStyleTag({ content: HIDE_TEXT_CSS }).then(h => h.evaluate(n => n.setAttribute('data-qa-hide', '')));
   await sleep(120);
   const png = await page.screenshot({ type: 'png' });
+  if (process.env.LH_SAVEHIDE) fs.writeFileSync(path.join(SHOTS, `hide-${Date.now()}.png`), png); // debug: the background the ratios were read from
   await page.evaluate(() => document.querySelectorAll('style[data-qa-hide]').forEach(n => n.remove()));
   return page.evaluate(async ({ b64, boxes }) => {
     const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
@@ -276,7 +277,8 @@ async function live(browser, S) {
     r.dwell.push(d);
   }
   const d4 = r.dwell.find(d => d.p === DWELL[4]), lab = d4 ? d4.label603 : null;
-  if (!(lab === null || lab > 0.9)) fail(sec, `603 label opacity ${lab} at its dwell`);
+  // phone: labels.js fades the label out when the window projects into the copy half of the screen
+  if (!S.mobile && !(lab === null || lab > 0.9)) fail(sec, `603 label opacity ${lab} at its dwell`);
 
   /* persistent UI + honesty caption */
   r.ui = [];

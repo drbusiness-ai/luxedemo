@@ -23,11 +23,14 @@ export function makeLabels({ root, camera, anchor }) {
       v.copy(anchor).project(camera);
       if (v.z > 1 || Math.abs(v.x) > 1.2 || Math.abs(v.y) > 1.2) { el.style.opacity = '0'; shown = false; return; }
       const x = (v.x * 0.5 + 0.5) * w, y = (0.5 - v.y * 0.5) * h;
+      // portrait: the chapter copy owns the lower half, so the label fades out before it can sit on the headline
+      const vis = h > w ? on * (1 - sm(h * 0.4, h * 0.46, y)) : on;
+      if (vis <= 0.001) { if (shown) { el.style.opacity = '0'; shown = false; } return; }
       // the leader runs away from the frame edge it is nearest to
       const want = x > w * 0.62 ? 1 : 0;
       if (want !== side || !shown) { side = want; el.classList.toggle('is-left', side === 1); }
       shown = true;
-      el.style.opacity = on.toFixed(3);
+      el.style.opacity = vis.toFixed(3);
       el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
       const d1 = sm(0.556, 0.563, p), d2 = sm(0.561, 0.569, p), t = sm(0.565, 0.574, p);
       set(ring, `translate(-50%,-50%) scale(${(0.4 + 0.6 * sm(0.553, 0.558, p)).toFixed(3)})`);
