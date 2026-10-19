@@ -1,0 +1,250 @@
+/* AS BUILT · the journey (scene track). Uses the site tokens with the same hex as fallback. */
+@property --accent{syntax:'<color>';inherits:true;initial-value:#A9C8FF}
+.stage{position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;z-index:0;display:block;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s;background:var(--ink,#070B1C)}
+.jr-ready.jr-stage-on .stage{opacity:1;visibility:visible;transition:opacity .4s ease}
+.jr-static .stage,.jr-poster .stage{display:none}
+
+.journey{--accent:var(--line,#A9C8FF);transition:--accent .6s ease;position:relative;z-index:1;height:100vh;height:100svh;min-height:560px;overflow:hidden;color:var(--porcelain,#F1ECE3);isolation:isolate}
+/* first paint: the pre poster (rendered from the scene, no text) over an instant CSS blueprint field; the canvas
+   crossfades over it once its first frame is up */
+.journey__poster{position:absolute;inset:0;z-index:0;display:block;pointer-events:none;
+  background:
+    linear-gradient(rgba(169,200,255,.08) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,rgba(169,200,255,.08) 1px,transparent 1px) 0 0/48px 48px,
+    radial-gradient(70% 80% at 68% 52%,#12296A 0%,#0B1F52 46%,#081843 100%);
+  transition:opacity .4s ease}
+.journey__poster img,.jposter img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.jr-ready .journey__poster{opacity:0}
+.ch__poster{display:none}
+
+/* ---------- chapters ---------- */
+.journey__chapters{position:absolute;inset:0;z-index:2;pointer-events:none}
+.ch{position:absolute;inset:0;display:flex;align-items:center;padding:clamp(92px,13vh,128px) var(--gut,clamp(16px,4vw,64px)) clamp(84px,12vh,120px)}
+.js .ch:not(.ch--01){opacity:0}
+.ch__in{position:relative;pointer-events:none;width:min(680px,44vw)}
+/* only the chapter (and beat) on screen takes pointer events; hidden CTAs stay focusable so focus can scroll them into view */
+.ch.is-live .ch__in,html:not(.js) .ch__in{pointer-events:auto}
+.ch__beat:not(.is-live),.ch__beat:not(.is-live) *{pointer-events:none!important}
+.jr-static .ch__in,.jr-poster .ch__in{pointer-events:auto}
+.jr-static .ch__beat *,.jr-poster .ch__beat *,html:not(.js) .ch__beat *{pointer-events:auto!important}
+/* SplitText line masks: room for italic overhang and descenders */
+.ch .ln-mask{padding:0 .12em .1em 0;margin:0 -.12em -.1em 0}
+/* no will-change on the lines: a promoted line keeps the raster it got mid-reveal (at a fractional offset), so the same
+   p would show softer or sharper text depending on where the visitor scrolled from; a plain repaint lands crisp */
+.ch--03 .ch__in,.ch--05 .ch__in{width:min(640px,42vw)}
+/* 03: the Burj and the sun glow hold the left half; the copy takes the right column, high, over the violet sky */
+.ch--03{align-items:flex-start;padding-top:max(10vh,84px)}
+.ch--03 .ch__in{width:32vw;margin-left:calc(52vw - var(--gut,clamp(16px,4vw,64px)))}
+.ch--03 .ch__display{font-size:clamp(34px,4.05vw,74px)}
+.ch--03 .ch__body{margin-top:20px;color:rgba(241,236,227,.96);text-shadow:0 0 2px rgba(7,11,28,.85),0 0 7px rgba(7,11,28,.8),0 0 15px rgba(7,11,28,.72),0 0 28px rgba(7,11,28,.6),0 0 52px rgba(7,11,28,.4)}
+.ch--03 .ch__display{text-shadow:0 0 2px rgba(7,11,28,.35),0 0 22px rgba(7,11,28,.3)}
+.ch--03 .ch__ctas{margin-top:26px}
+/* 03 sits over the brightest sky: label and serif in Porcelain, the accent on one word (contrast with the raised scrim) */
+.ch--03 .ch__label,.ch--03 .ch__serif{color:var(--porcelain,#F1ECE3);text-shadow:0 0 2px rgba(7,11,28,.55),0 0 16px rgba(7,11,28,.5),0 0 36px rgba(7,11,28,.3)}
+.ch--03 .ch__label{text-shadow:0 0 2px rgba(7,11,28,.75),0 0 10px rgba(7,11,28,.65),0 0 26px rgba(7,11,28,.4)}
+.ch__acc{font-style:inherit;color:var(--accent);transition:color .6s ease}
+/* 02 and 04 are the two light frames (the studio model on its rose backdrop, the sunset sky): the copy is set
+   in Night Ink like print on a photograph, which holds 5:1+ where white type could not */
+.ch--02 .ch__in{width:min(600px,38vw)}
+.ch--02 .ch__display{font-size:clamp(40px,4.7vw,84px)}
+.ch--02 .ch__label{color:#3A1020}
+.ch--02 .ch__serif{color:#3A1020}
+.ch--02 .ch__display{color:var(--ink,#070B1C)}
+.ch--02 .ch__body{color:rgba(7,11,28,.84)}
+.ch--02 .btn--solid{background:var(--ink,#070B1C);color:var(--porcelain,#F1ECE3);box-shadow:0 14px 34px -16px rgba(7,11,28,.6)}
+.ch--02 .btn--solid svg{color:inherit}
+@media (min-width:761px){
+  .ch--04 .ch__label{color:#4A1C2B}
+  .ch--04 .ch__display{color:var(--ink,#070B1C)}
+  .ch--04 .ch__body{color:rgba(7,11,28,.84)}
+  .ch--04 .btn--solid{background:var(--ink,#070B1C);color:var(--porcelain,#F1ECE3);box-shadow:0 14px 34px -16px rgba(7,11,28,.6)}
+  .ch--04 .btn--solid svg{color:inherit}
+  /* 04: last light. The copy hangs in the open sky between the Burj spire and One by Omniyat */
+  .ch--04{align-items:flex-start;padding-top:clamp(92px,12.5vh,118px)}
+  .ch--04 .ch__in{width:min(640px,44vw);margin-left:calc(31vw - var(--gut,clamp(16px,4vw,64px)))}
+  .ch--04 .ch__serif{font-size:clamp(26px,2.6vw,46px)}
+  .ch--04 .ch__title{margin-top:14px}
+  .ch--04 .ch__label{color:var(--ink,#070B1C)}
+  .ch--04 .ch__serif{color:#3A1236}
+  .ch--04 .ch__display{font-size:clamp(34px,3.5vw,62px);max-width:10.5em}
+  .ch--04 .ch__body{margin-top:14px;max-width:520px}
+  .ch--04 .ch__ctas{margin-top:18px}
+  .ch--04 .ch__link{color:var(--ink,#070B1C);border-color:rgba(7,11,28,.4)}
+  .ch--04 .ch__link:hover{color:var(--ink,#070B1C);border-color:var(--ink,#070B1C)}
+  .ch--04 .ch__readout{margin-top:8px;padding-left:40px;color:var(--ink,#070B1C)}
+  .ch--04 .ch__readout b{color:#3A1236}
+}
+.ch__eyebrow,.ch__label{font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:11.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);transition:color .6s ease}
+.ch__eyebrow{color:var(--cool,#D6E6FF)}
+.ch__eyebrow::before,.ch__label::before{content:"";display:inline-block;width:28px;height:1px;margin:0 12px 3px 0;vertical-align:middle;background:currentColor;opacity:.7}
+.ch__title{margin-top:20px;font-weight:300}
+.ch__serif{display:block;font-family:var(--f-serif,'Instrument Serif',serif);font-style:italic;font-weight:400;font-size:clamp(28px,3.2vw,56px);line-height:1.02;letter-spacing:0;color:var(--accent);transition:color .6s ease}
+.ch__display{display:block;margin-top:.12em;font-family:var(--f-sans,'Archivo',sans-serif);font-stretch:125%;font-weight:300;font-size:clamp(40px,5.6vw,100px);line-height:.92;letter-spacing:-.012em;text-transform:uppercase;color:var(--porcelain,#F1ECE3)}
+.ch--01 .ch__display{font-size:clamp(44px,6.4vw,118px)}
+.ch__body{margin-top:24px;max-width:470px;font-size:clamp(15.5px,1.12vw,17px);line-height:1.6;color:rgba(241,236,227,.78)}
+.ch__ctas{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;margin-top:30px}
+.ch__link{font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--cool,#D6E6FF);padding:10px 2px;border-bottom:1px solid rgba(169,200,255,.35);transition:border-color .4s,color .4s}
+.ch__link:hover{color:var(--porcelain,#F1ECE3);border-color:var(--venus,#E07AA6)}
+.ch__readout{margin-top:22px;font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,236,227,.62)}
+.ch__readout b{font-weight:500;color:var(--saffron,#FFC66E)}
+.ch__micro{margin-top:18px;font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,236,227,.8);text-shadow:0 0 2px rgba(7,11,28,.7),0 0 10px rgba(7,11,28,.55)}
+.ch__beat--b{position:absolute;left:0;top:50%;transform:translateY(-50%);width:100%}
+.js .ch__beat--b{opacity:0}
+.ch__chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.ch__chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(169,200,255,.3);background:rgba(7,11,28,.55);font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--porcelain,#F1ECE3);transition:border-color .4s,background .4s}
+.ch__chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber,#FFB35C);box-shadow:0 0 10px rgba(255,179,92,.8)}
+.ch__chip:hover{border-color:var(--amber,#FFB35C);background:rgba(7,11,28,.8)}
+.vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- rail: a vertical dimension line, ticks 01-06 ---------- */
+.journey__rail{position:absolute;right:clamp(14px,2.2vw,34px);top:50%;z-index:3;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:clamp(14px,3.4vh,30px);padding:10px 0}
+.journey[data-ch="02"],.journey[data-ch="03"],.journey[data-ch="04"]{--rail-plate:.72}
+.journey__rail::before{content:"";position:absolute;right:5px;top:0;bottom:0;width:1px;background:rgba(169,200,255,.28)}
+.journey__rail::after{content:"";position:absolute;right:1px;top:0;width:9px;height:1px;background:rgba(169,200,255,.5);box-shadow:0 calc(100% + 0px) 0 rgba(169,200,255,.5)}
+/* each tick sits on its own small Ink tag so the rail reads over the light studio frames, the sky and the lit city alike */
+.journey__rail button{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:0;min-height:24px;padding:0 0 0 8px;background:rgba(7,11,28,var(--rail-plate,.5));border-radius:2px;font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:10.5px;letter-spacing:.16em;color:rgba(241,236,227,.72);transition:color .5s,background-color .6s}
+.journey__rail button::after{content:"";margin-left:8px;width:11px;height:1px;background:currentColor;transition:width .5s cubic-bezier(.16,1,.3,1),background .6s}
+.journey__rail button span{max-width:0;overflow:hidden;opacity:0;transform:translateX(6px);transition:opacity .4s,transform .5s cubic-bezier(.16,1,.3,1),max-width .5s cubic-bezier(.16,1,.3,1),margin .5s;text-transform:uppercase;white-space:nowrap}
+.journey__rail button:hover span,.journey__rail button:focus-visible span,.journey__rail button[aria-current] span{max-width:12em;margin-right:10px;opacity:1;transform:none}
+.journey__rail button[aria-current]{color:var(--accent)}
+.journey__rail button[aria-current]::after{width:22px}
+
+/* ---------- title block, skip, caption ---------- */
+.journey__titleblock{position:absolute;right:clamp(64px,7vw,120px);bottom:clamp(92px,12vh,112px);z-index:2;display:grid;grid-template-columns:auto auto;border:1px solid rgba(169,200,255,.42);font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(169,200,255,.9);background:rgba(7,11,28,.58);pointer-events:none}
+.journey__titleblock span{padding:7px 12px;border-right:1px solid rgba(169,200,255,.28);border-bottom:1px solid rgba(169,200,255,.28);white-space:nowrap}
+.journey__titleblock span:nth-child(2n){border-right:0}
+.journey__titleblock span:nth-last-child(-n+2){border-bottom:0}
+.journey__titleblock .tb__h{grid-column:1/-1;border-right:0;color:var(--porcelain,#F1ECE3);font-weight:500}
+.journey__titleblock [data-status]{color:var(--accent)}
+.journey__skip{position:absolute;left:var(--gut,clamp(16px,4vw,64px));bottom:clamp(22px,4.4vh,40px);z-index:3;display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 16px 0 14px;border-radius:999px;border:1px solid rgba(169,200,255,.28);background:rgba(7,11,28,.5);font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,236,227,.8);transition:border-color .4s,color .4s}
+.journey__skip::before{content:"";width:1px;height:12px;background:currentColor;box-shadow:-3px 4px 0 -0px transparent;transform:translateY(-1px)}
+.journey__skip:hover{border-color:var(--line,#A9C8FF);color:var(--porcelain,#F1ECE3)}
+.journey__caption{position:absolute;left:calc(var(--gut,clamp(16px,4vw,64px)) + 196px);bottom:calc(clamp(22px,4.4vh,40px) + 14px);z-index:2;font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(241,236,227,.86);background:rgba(7,11,28,.72);padding:4px 8px 3px;border-radius:2px;pointer-events:none}
+.js .journey__caption{visibility:hidden;opacity:0}
+.journey__labels{position:absolute;inset:0;z-index:2;pointer-events:none}
+
+/* ---------- the nav's "Talk to an advisor" stays on screen for the whole pin ---------- */
+.jr-pin .nav.is-hidden{transform:none}
+
+/* ---------- projected labels (transform/opacity only) ---------- */
+.jl{position:absolute;left:0;top:0;width:0;height:0;opacity:0;will-change:transform,opacity;--coral:var(--coral,#FF5E4D)}
+.jl i{position:absolute;display:block;font-style:normal}
+.jl__ring{left:0;top:0;width:18px;height:18px;border-radius:50%;border:1.5px solid #FF5E4D;box-shadow:0 0 14px rgba(255,94,77,.55),inset 0 0 8px rgba(255,94,77,.35)}
+.jl__lead{height:1.5px;background:#FF5E4D;transform-origin:0 50%;box-shadow:0 0 6px rgba(255,94,77,.5)}
+.jl__lead--a{left:0;top:-.75px;width:46px;background:linear-gradient(90deg,transparent 0 10px,#FF5E4D 10px)}
+.jl__lead--b{left:32.5px;top:-33.25px;width:88px}
+.jl__txt{position:absolute;left:128px;top:-32.5px;white-space:nowrap;padding:7px 12px 7px 11px;border-left:1.5px solid #FF5E4D;background:rgba(7,11,28,.72);font-family:var(--f-mono,'IBM Plex Mono',monospace);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--porcelain,#F1ECE3);opacity:0;will-change:transform,opacity}
+.jl__txt b{font-weight:500;color:var(--amber,#FFB35C)}
+.jl.is-left .jl__lead--b{left:auto;right:32.5px;transform-origin:100% 50%}
+.jl.is-left .jl__txt{left:auto;right:128px;border-left:0;border-right:1.5px solid #FF5E4D;padding:7px 11px 7px 12px}
+@media (max-width:760px){
+  .jl__lead--a{width:36px}
+  .jl__lead--b{left:25.5px;top:-26.2px;width:40px}
+  .jl.is-left .jl__lead--b{right:25.5px}
+  .jl__txt{left:72px;top:-25.5px;font-size:9.5px;letter-spacing:.12em;padding:6px 9px}
+  .jl.is-left .jl__txt{right:72px}
+  .jr-pin .nav__cta{display:inline-flex;flex:none;white-space:nowrap;min-height:36px;padding:0 13px;font-size:9.5px;letter-spacing:.06em;margin-left:auto}
+  .jl__txt{white-space:normal;width:132px;line-height:1.5}
+  .jl__txt b{display:block}
+  .jl__sep{display:none}
+}
+
+/* poster mode: canvas only (QA posters), every DOM overlay hidden */
+.jr-postermode .journey__chapters,.jr-postermode .journey__rail,.jr-postermode .journey__titleblock,.jr-postermode .journey__skip,.jr-postermode .journey__caption,.jr-postermode .journey__labels,
+.jr-postermode .nav,.jr-postermode .nyla-launch,.jr-postermode .nyla-teaser,.jr-postermode .grain,.jr-postermode .progress,.jr-postermode .cursor{visibility:hidden!important;opacity:0!important}
+
+/* debug overlay (?lhdebug) */
+.jr-debug{position:fixed;left:10px;bottom:10px;z-index:400;padding:8px 10px;border-radius:6px;background:rgba(7,11,28,.82);border:1px solid rgba(169,200,255,.3);font:11px/1.5 var(--f-mono,'IBM Plex Mono',monospace);color:#D6E6FF;white-space:pre;pointer-events:none}
+
+/* ---------- poster scrims: a soft Night Ink (or Porcelain, under Ink copy) wash where each chapter's copy sits.
+   Shared by the stacked chapters and the guard's poster layers; never over text, never blurred. ---------- */
+.jposter::after{content:"";position:absolute;inset:0;pointer-events:none}
+.jposter[data-k="pre"]::after,.jposter[data-k="01"]::after{background:linear-gradient(90deg,rgba(7,11,28,.5) 0%,rgba(7,11,28,.28) 42%,rgba(7,11,28,0) 68%)}
+.jposter[data-k="02"]::after{background:linear-gradient(90deg,rgba(241,236,227,.3) 0%,rgba(241,236,227,.14) 40%,rgba(241,236,227,0) 62%)}
+.jposter[data-k="03"]::after{background:radial-gradient(54% 66% at 69% 34%,rgba(7,11,28,.56) 0%,rgba(7,11,28,.34) 52%,rgba(7,11,28,0) 100%)}
+.jposter[data-k="04"]::after{background:radial-gradient(46% 52% at 47% 30%,rgba(241,236,227,.22) 0%,rgba(241,236,227,.1) 55%,rgba(241,236,227,0) 100%)}
+.jposter[data-k="05"]::after,.jposter[data-k="05b"]::after,.jposter[data-k="06"]::after,.jposter[data-k="show"]::after{background:linear-gradient(90deg,rgba(7,11,28,.62) 0%,rgba(7,11,28,.36) 40%,rgba(7,11,28,0) 66%)}
+@media (max-width:760px){
+  .jposter::after,.jposter[data-k]::after{background:linear-gradient(0deg,rgba(7,11,28,.84) 0%,rgba(7,11,28,.7) 36%,rgba(7,11,28,.52) 56%,rgba(7,11,28,.2) 70%,rgba(7,11,28,0) 80%)}
+  .jposter[data-k="pre"]::after,.jposter[data-k="01"]::after{background:linear-gradient(0deg,rgba(7,11,28,.6) 0%,rgba(7,11,28,.32) 40%,rgba(7,11,28,0) 64%)}
+  .jposter[data-k="02"]::after{background:linear-gradient(0deg,rgba(241,236,227,.42) 0%,rgba(241,236,227,.2) 40%,rgba(241,236,227,0) 62%)}
+  /* 04 carries the tallest column (label, sunset readout, serif) over the brightest sky: the wash reaches higher */
+  .jposter[data-k="04"]::after{background:linear-gradient(0deg,rgba(7,11,28,.84) 0%,rgba(7,11,28,.7) 40%,rgba(7,11,28,.56) 58%,rgba(7,11,28,.26) 72%,rgba(7,11,28,0) 86%)}
+}
+
+/* ---------- static stack: reduced motion, no WebGL / Save-Data / low memory, no JS.
+   Six full-height chapters, each over its own poster still, identical copy and CTAs, no pin. ---------- */
+html:not(.js) .journey,.jr-static .journey,.jr-poster .journey{height:auto;min-height:0;overflow:visible}
+html:not(.js) .journey__poster,.jr-static .journey__poster,.jr-poster .journey__poster{display:none}
+html:not(.js) .ch,.jr-static .ch,.jr-poster .ch{position:relative;inset:auto;isolation:isolate;overflow:hidden;min-height:100vh;min-height:100svh;visibility:visible!important;opacity:1!important}
+html:not(.js) .ch__poster,.jr-static .ch__poster,.jr-poster .ch__poster{display:block;position:absolute;inset:0;z-index:-1;pointer-events:none;background:#0B1F52}
+html:not(.js) .journey__chapters,.jr-static .journey__chapters,.jr-poster .journey__chapters{position:relative}
+/* chapter 05 keeps both beats: each takes a full screen over its own still (603 first light, then the lit city) */
+html:not(.js) .ch--05,.jr-static .ch--05,.jr-poster .ch--05{display:block;padding:0}
+html:not(.js) .ch--05 .ch__in,.jr-static .ch--05 .ch__in,.jr-poster .ch--05 .ch__in{width:auto;margin:0}
+html:not(.js) .ch__beat,.jr-static .ch__beat,.jr-poster .ch__beat{position:relative;inset:auto;top:auto;transform:none;isolation:isolate;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:100vh;min-height:100svh;margin:0;padding:clamp(92px,13vh,128px) var(--gut,clamp(16px,4vw,64px)) clamp(84px,12vh,120px);visibility:visible!important;opacity:1!important}
+html:not(.js) .ch__beat>:not(.ch__poster),.jr-static .ch__beat>:not(.ch__poster),.jr-poster .ch__beat>:not(.ch__poster){max-width:min(640px,42vw)}
+.jr-static .ch:nth-child(2) .ch__poster,.jr-poster .ch:nth-child(2) .ch__poster{background:linear-gradient(180deg,#B8A9D9,#EDB8B0)}
+.jr-static .ch:nth-child(3) .ch__poster,.jr-poster .ch:nth-child(3) .ch__poster{background:linear-gradient(180deg,#5A4C8E,#C77E6A 62%,#3A2430)}
+.jr-static .ch:nth-child(4) .ch__poster,.jr-poster .ch:nth-child(4) .ch__poster{background:linear-gradient(180deg,#7A6AB0,#D98AA0 60%,#2A1A2E)}
+.jr-static .ch:nth-child(5) .ch__poster,.jr-poster .ch:nth-child(5) .ch__poster{background:linear-gradient(180deg,#14307E,#0B1430)}
+.jr-static .ch:nth-child(6) .ch__poster,.jr-poster .ch:nth-child(6) .ch__poster{background:#070B1C}
+.jr-static .journey__rail,.jr-poster .journey__rail,html:not(.js) .journey__rail{display:none}
+.jr-static .journey__titleblock,.jr-poster .journey__titleblock,html:not(.js) .journey__titleblock{display:none}
+/* skip + honesty caption ride along the bottom of the screen while the stacked chapters scroll past (sticky, so they
+   never follow the visitor into the rest of the page) */
+html:not(.js) .journey__skip,.jr-static .journey__skip,.jr-poster .journey__skip{position:sticky;left:auto;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;width:max-content;margin:-60px 0 20px var(--gut,clamp(16px,4vw,64px))}
+html:not(.js) .journey__caption,.jr-static .journey__caption,.jr-poster .journey__caption{position:sticky;left:auto;top:auto;bottom:calc(30px + env(safe-area-inset-bottom,0px));display:block;width:max-content;max-width:calc(100vw - 32px);margin:-46px 0 26px calc(var(--gut,clamp(16px,4vw,64px)) + 196px);visibility:visible;opacity:1}
+
+/* ---------- hard guard / lost context: the canvas crossfades out, the posters take the pinned journey ---------- */
+.journey__posters{position:absolute;inset:0;z-index:1;pointer-events:none}
+.journey__posters .jposter{position:absolute;inset:0;opacity:0;will-change:opacity}
+.jr-guard .journey__poster{opacity:1}
+.jr-guard .stage{opacity:0!important;visibility:hidden!important;transition:opacity .8s ease,visibility 0s linear .8s!important}
+.jr-guard .journey__labels{display:none}
+
+/* ---------- the showcase night map when the canvas is not live behind it ---------- */
+.jr-static .show__pin,.jr-poster .show__pin,.jr-guard .show__pin{isolation:isolate}
+.jr-static .show__pin::before,.jr-poster .show__pin::before,.jr-guard .show__pin::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:#070B1C url(../img/journey/poster-show-d.webp) 50% 50%/cover no-repeat}
+@media (max-width:760px){
+  .jr-static .show,.jr-poster .show,.jr-guard .show{overflow:hidden;overflow:clip}
+  .jr-static .show__pin::before,.jr-poster .show__pin::before,.jr-guard .show__pin::before{position:sticky;top:0;display:block;height:100vh;height:100lvh;margin-bottom:-100vh;margin-bottom:-100lvh;background-image:url(../img/journey/poster-show-m.webp)}
+}
+
+/* ---------- phone ---------- */
+@media (max-width:760px){
+  .ch{align-items:flex-end;padding:96px 16px calc(84px + env(safe-area-inset-bottom,0px))}
+  .ch__in,.ch--02 .ch__in,.ch--03 .ch__in,.ch--04 .ch__in,.ch--05 .ch__in{width:100%;margin-left:0}
+  .ch__display,.ch--01 .ch__display,.ch--02 .ch__display,.ch--03 .ch__display,.ch--04 .ch__display{font-size:clamp(34px,11vw,48px);line-height:.94}
+  .ch--04 .ch__serif{font-size:clamp(24px,7vw,32px)}
+  .ch--04 .ch__readout{padding-left:0;margin-top:8px;color:var(--porcelain,#F1ECE3);text-shadow:0 0 2px rgba(7,11,28,.6),0 0 12px rgba(7,11,28,.5)}
+  .ch--04 .ch__display{font-size:clamp(30px,9.4vw,40px)}
+  .ch--04 .ch__label,.ch--04 .ch__serif{color:#F7CFDF;text-shadow:0 0 2px rgba(7,11,28,.6),0 0 16px rgba(7,11,28,.45)}
+  .ch--04 .ch__label{color:var(--porcelain,#F1ECE3)}
+  .ch--04 .ch__label,.ch--04 .ch__readout{text-shadow:0 0 2px rgba(7,11,28,.8),0 0 10px rgba(7,11,28,.62),0 0 24px rgba(7,11,28,.4)}
+  /* 03 (bright haze) and 05 (lit dusk sky) labels sit above the phone scrim: a firmer halo keeps the 11.5px mono at 4.5:1 */
+  .ch--03 .ch__label,.ch--05 .ch__label{text-shadow:0 0 2px rgba(7,11,28,.85),0 0 9px rgba(7,11,28,.72),0 0 22px rgba(7,11,28,.5)}
+  .ch__serif{font-size:clamp(24px,7vw,32px)}
+  .ch__body{margin-top:16px;font-size:15.5px;line-height:1.55}
+  .ch__ctas{margin-top:22px}
+  .ch__ctas .btn{width:100%;min-height:50px}
+  .ch__beat--b{top:auto;bottom:0;transform:none}
+  .journey__rail{top:74px;right:16px;left:16px;transform:none;flex-direction:row;align-items:center;justify-content:space-between;gap:0;padding:0}
+  .journey__rail::before{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px}
+  .journey__rail::after{display:none}
+  .journey__rail button{padding:0 5px;min-height:24px;min-width:24px;justify-content:center}
+  .journey__rail button::after{width:6px;height:6px;border-radius:50%}
+  .journey__rail button[aria-current]::after{width:8px;height:8px}
+  .journey__rail button span{display:none}
+  .journey__titleblock{display:none}
+  .journey__skip{bottom:calc(20px + env(safe-area-inset-bottom,0px));left:16px}
+  .journey__caption{left:16px;right:auto;top:108px;bottom:auto;font-size:9px;max-width:70vw;text-align:left}
+  html:not(.js) .ch,.jr-static .ch,.jr-poster .ch{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+  html:not(.js) .ch--05,.jr-static .ch--05,.jr-poster .ch--05{padding:0}
+  html:not(.js) .ch__beat,.jr-static .ch__beat,.jr-poster .ch__beat{justify-content:flex-end;padding:96px 16px calc(112px + env(safe-area-inset-bottom,0px))}
+  html:not(.js) .ch__beat>:not(.ch__poster),.jr-static .ch__beat>:not(.ch__poster),.jr-poster .ch__beat>:not(.ch__poster){max-width:100%}
+  html:not(.js) .journey__caption,.jr-static .journey__caption,.jr-poster .journey__caption{top:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));margin:-40px 0 20px 16px;letter-spacing:.09em;white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){
+  .stage{transition:none}
+}
