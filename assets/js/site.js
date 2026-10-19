@@ -212,13 +212,10 @@
     tinted.forEach((sec, i) => ScrollTrigger.create({
       trigger: sec, start: 'top 60%', end: 'bottom 60%',
       onEnter: () => tint(sec.dataset.bg), onEnterBack: () => tint(sec.dataset.bg),
-      onLeaveBack: () => { if (i === 0) tint('#0a0b10'); }
+      onLeaveBack: () => { if (i === 0) tint('#070B1C'); }
     }));
-    $$('.office__media figure.clipr').forEach((f, i) => {
-      gsap.fromTo(f, { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', duration: 1.6, ease: 'expo.inOut', delay: i * 0.15, scrollTrigger: { trigger: f, start: 'top 88%', once: true } });
-      const im = f.querySelector('img');
-      if (im) gsap.fromTo(im, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: true } });
-    });
+    /* office photos: a slow parallax inside their window-frame mounts (the reveal itself is a CSS transform cover) */
+    $$('.office__photo img').forEach(im => gsap.fromTo(im, { yPercent: -3.5 }, { yPercent: 3.5, ease: 'none', scrollTrigger: { trigger: im.closest('figure'), start: 'top bottom', end: 'bottom top', scrub: true } }));
     $$('.shead .display, .lead__copy .display').forEach(h => gsap.fromTo(h, { y: 30 }, { y: -30, ease: 'none', scrollTrigger: { trigger: h, start: 'top bottom', end: 'bottom top', scrub: true } }));
   }
 
@@ -231,7 +228,22 @@
     const pin = $('.show__pin', show), track = $('.show__track', show), panels = $$('.panel', show), bar = $('.show__bar i', show);
     const cur = $$('.js-show-cur');
     const setCur = n => cur.forEach(c => (c.textContent = pad2(n)));
-    const prep = p => $$('.panel__tower path', p).map(path => { const l = path.getTotalLength(); gsap.set(path, { strokeDasharray: l, strokeDashoffset: l }); return path; });
+    /* the journey canvas stays live behind the panels: hand it the showcase progress (no-op until the scene exists) */
+    const toScene = q => { const s = window.LHScene; if (s && s.showcase) s.showcase(q); };
+    /* each tower replays the journey in 1.2 s: the outline rises (mask rect scaled by transform),
+       then the porcelain fill, then the floors light in Window Amber from the ground up */
+    const replay = p => {
+      const mr = $('.mr', p), sil = $('.sil', p), fls = $$('.fl', p), o603 = $('.o603', p);
+      gsap.set(mr, { scaleY: 0, transformOrigin: '50% 100%' });
+      gsap.set([sil, ...fls], { opacity: 0 });
+      if (o603) gsap.set(o603, { opacity: 0 });
+      const tl = gsap.timeline({ paused: true })
+        .to(mr, { scaleY: 1, duration: 0.55, ease: 'power2.inOut' }, 0)
+        .to(sil, { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0.45)
+        .to(fls, { opacity: 1, duration: 0.08, ease: 'none', stagger: { amount: 0.42 } }, 0.7);
+      if (o603) tl.to(o603, { opacity: 1, duration: 0.25, ease: 'power1.out' }, 1.0);
+      return tl;
+    };
     const names = panels.map(p => new SplitText($('.panel__name', p), { type: 'lines', mask: 'lines', linesClass: 'ln' }));
     const mm = gsap.matchMedia();
     mm.add('(min-width: 761px)', () => {
@@ -239,35 +251,57 @@
       const h = gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: {
         trigger: pin, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 1, invalidateOnRefresh: true,
         onToggle: s => pin.classList.toggle('is-active', s.isActive),
-        onUpdate: s => { setCur(1 + Math.round(s.progress * (panels.length - 1))); if (bar) bar.style.transform = `scaleX(${s.progress})`; }
+        onUpdate: s => { setCur(1 + Math.round(Math.min(1, s.progress * 1.08) * (panels.length - 1))); if (bar) bar.style.transform = `scaleX(${s.progress})`; toScene(s.progress); }
       } });
       const vw = window.innerWidth;
       panels.forEach((p, i) => {
-        const paths = prep(p);
-        const early = p.offsetLeft < vw * 0.85; // already on screen when the pin starts: reveal as the section arrives
-        const finalLeft = ((p.offsetLeft - dist()) / vw) * 100; // where this panel rests when the track has fully moved
-        const drawEnd = 'left ' + Math.round(Math.max(34, Math.min(92, finalLeft + 4))) + '%';
-        const draw = early ? { trigger: pin, start: 'top 80%', end: 'top 5%', scrub: true } : { trigger: p, containerAnimation: h, start: 'left 96%', end: drawEnd, scrub: true };
-        const enter = early ? { trigger: pin, start: 'top 70%', once: true } : { trigger: p, containerAnimation: h, start: 'left 82%', toggleActions: 'play none none reverse' };
-        gsap.to(paths, { strokeDashoffset: 0, ease: 'none', stagger: 0.18, scrollTrigger: draw });
-        gsap.from($('.panel__idx', p), { scale: 0.55, opacity: 0, transformOrigin: 'left bottom', ease: 'none', scrollTrigger: draw });
+        const tl = replay(p);
+        const early = p.offsetLeft < vw * 0.85; // already on screen when the pin starts: replay as the section arrives
+        const at = early ? { trigger: pin, start: 'top 70%' } : { trigger: p, containerAnimation: h, start: 'left 84%' };
+        ScrollTrigger.create(Object.assign({ onEnter: () => tl.play(), onLeaveBack: () => tl.reverse() }, at));
+        const enter = Object.assign({ toggleActions: 'play none none reverse' }, at);
+        gsap.from($('.panel__idx', p), { scale: 0.55, opacity: 0, transformOrigin: 'left bottom', duration: 1, ease: 'expo.out', scrollTrigger: enter });
         gsap.from(names[i].lines, { yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.09, scrollTrigger: enter });
-        gsap.from($$('.panel__dev, .panel__facts, .panel__cta', p), { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: enter });
+        gsap.from($$('.panel__dev, .panel__loc, .panel__facts, .panel__cta', p), { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out', stagger: 0.07, clearProps: 'transform', scrollTrigger: enter });
         gsap.fromTo($('.panel__bg', p), { xPercent: -7 }, { xPercent: 7, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: h, start: 'left right', end: 'right left', scrub: true } });
         gsap.fromTo($('.panel__tower', p), { xPercent: 6 }, { xPercent: -4, ease: 'none', scrollTrigger: { trigger: p, containerAnimation: h, start: 'left right', end: 'right left', scrub: true } });
       });
       return () => { gsap.set(track, { clearProps: 'transform' }); };
     });
     mm.add('(max-width: 760px)', () => {
+      ScrollTrigger.create({ trigger: show, start: 'top bottom', end: 'bottom top', onUpdate: s => toScene(s.progress) });
       panels.forEach((p, i) => {
-        const paths = prep(p);
-        gsap.to(paths, { strokeDashoffset: 0, ease: 'none', stagger: 0.18, scrollTrigger: { trigger: p, start: 'top 92%', end: 'top 20%', scrub: true } });
+        const tl = replay(p);
+        ScrollTrigger.create({ trigger: p, start: 'top 78%', onEnter: () => tl.play(), onLeaveBack: () => tl.reverse() });
         gsap.from(names[i].lines, { yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.09, scrollTrigger: { trigger: p, start: 'top 80%', once: true } });
-        gsap.from($$('.panel__dev, .panel__facts, .panel__cta', p), { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: p, start: 'top 75%', once: true } });
+        gsap.from($$('.panel__dev, .panel__loc, .panel__facts, .panel__cta', p), { opacity: 0, y: 22, duration: 0.9, ease: 'power3.out', stagger: 0.08, clearProps: 'transform', scrollTrigger: { trigger: p, start: 'top 75%', once: true } });
         gsap.fromTo($('.panel__bg', p), { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: p, start: 'top bottom', end: 'bottom top', scrub: true } });
         ScrollTrigger.create({ trigger: p, start: 'top 55%', end: 'bottom 55%', onToggle: s => { if (s.isActive) setCur(i + 1); } });
       });
     });
+  }
+
+  /* =====================================================
+     OFFICE · walk-up card scrubs the client's own frames (o01..o18) on scroll
+     ===================================================== */
+  const walk = $('.js-walk');
+  if (walk) {
+    const num = $('.js-walk-n'), wbar = $('.walkup__frame i');
+    const srcs = Array.from({ length: 18 }, (_, i) => `assets/img/seq/o${pad2(i + 1)}-duo.webp`);
+    const cache = [];
+    let frame = 0;
+    const setFrame = f => { if (f === frame) return; frame = f; walk.src = srcs[f]; if (num) num.textContent = pad2(f + 1); };
+    if (!reduce && hasGsap && window.ScrollTrigger) {
+      new IntersectionObserver((en, ob) => {
+        if (!en[0].isIntersecting) return;
+        ob.disconnect();
+        srcs.forEach((s, i) => { const im = new Image(); im.decoding = 'async'; im.src = s; cache[i] = im; });
+      }, { rootMargin: '900px 0px' }).observe(walk);
+      ScrollTrigger.create({ trigger: '#office', start: 'top 75%', end: 'bottom 35%', onUpdate: s => {
+        setFrame(Math.min(17, Math.floor(s.progress * 18)));
+        if (wbar) wbar.style.transform = `scaleX(${s.progress.toFixed(3)})`;
+      } });
+    }
   }
 
   /* =====================================================
@@ -295,7 +329,8 @@
     foot.classList.add('foot-gated');
     footTl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
       trigger: fits ? spacer : foot, start: fits ? 'top bottom' : 'top 85%', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true,
-      onUpdate: s => foot.classList.toggle('is-on', s.progress > 0), onToggle: s => foot.classList.toggle('is-on', s.isActive || s.progress > 0)
+      onUpdate: s => { foot.classList.toggle('is-on', s.progress > 0); foot.classList.toggle('is-lit', s.progress > 0.7); },
+      onToggle: s => foot.classList.toggle('is-on', s.isActive || s.progress > 0)
     } })
       .fromTo(inner, { yPercent: fits ? -22 : 0 }, { yPercent: 0, duration: 1 }, 0)
       .fromTo('.foot__sun', { yPercent: 55, scale: 0.6 }, { yPercent: 0, scale: 1, duration: 1 }, 0)
@@ -352,7 +387,7 @@
      ===================================================== */
   const TOWERS = [
     [0.05, 0.04, 0.2, 'r'], [0.105, 0.05, 0.36, 'sail'], [0.165, 0.03, 0.27, 'r'], [0.205, 0.04, 0.4, 'slant'],
-    [0.255, 0.028, 0.3, 'r'], [0.3, 0.05, 0.5, 'omniyat'], [0.36, 0.03, 0.34, 'r'], [0.405, 0.04, 0.44, 'taper'],
+    [0.255, 0.028, 0.3, 'r'], [0.305, 0.052, 0.56, 'omniyat'], [0.36, 0.03, 0.34, 'r'], [0.405, 0.04, 0.44, 'taper'],
     [0.5, 0.075, 0.95, 'burj'], [0.59, 0.034, 0.46, 'r'], [0.635, 0.03, 0.37, 'slant'], [0.69, 0.06, 0.55, 'frame'],
     [0.75, 0.03, 0.31, 'r'], [0.795, 0.04, 0.45, 'taper'], [0.845, 0.034, 0.35, 'slant'], [0.9, 0.05, 0.28, 'r'], [0.955, 0.034, 0.23, 'r']
   ];
@@ -366,7 +401,12 @@
       else if (k === 'slant') P([[x0, g], [x0, top], [x1, top + h * 0.12], [x1, g]]);
       else if (k === 'taper') P([[x0, g], [x0, top + h * 0.2], [c, top], [x1, top + h * 0.2], [x1, g]]);
       else if (k === 'sail') { d += `M${x0.toFixed(1)} ${g}L${x0.toFixed(1)} ${top.toFixed(1)}Q${(x1 + w * 0.5).toFixed(1)} ${(top + h * 0.3).toFixed(1)} ${x1.toFixed(1)} ${g}Z`; P([[x0 - 2, top], [x0 + 2, top], [x0, top - h * 0.12]]); }
-      else if (k === 'omniyat') { const m = g - h * 0.55, o = w * 0.32; P([[x0, g], [x0, m], [x0 + o, m], [x0 + o, top], [x1 + o, top], [x1 + o, m + h * 0.1], [x1, m + h * 0.1], [x1, g]]); }
+      else if (k === 'omniyat') {
+        // One by Omniyat: black slab, lighter glass box cantilevered off the face at 78-90% of the height
+        const yb = g - h * 0.78, yt = g - h * 0.9, o = w * 0.3;
+        P([[x0, g], [x0, yb], [x0 - o, yb], [x0 - o, yt], [x0, yt], [x0, top], [x1, top], [x1, g]]);
+        d += `M${x0.toFixed(1)} ${yt.toFixed(1)}H${(x0 + w * 0.7).toFixed(1)}V${yb.toFixed(1)}H${x0.toFixed(1)}`;
+      }
       else if (k === 'frame') P([[x0, g], [x0, top], [x1, top], [x1, g], [x1 - w * 0.24, g], [x1 - w * 0.24, top + h * 0.14], [x0 + w * 0.24, top + h * 0.14], [x0 + w * 0.24, g]]);
       else if (k === 'burj') {
         const tiers = [1, 0.74, 0.54, 0.38, 0.25, 0.15], th = (h * 0.78) / tiers.length, L = [], R = [];
@@ -388,7 +428,7 @@
     return out.sort((a, b) => a[0] - b[0]);
   }
 
-  /* footer skyline: drawn in copper as it comes into view */
+  /* footer skyline: drawn in Drafting Line as it comes into view; One by Omniyat carries the single lit 603 window */
   const drawLine = (path, dur) => {
     const len = path.getTotalLength();
     path.style.strokeDasharray = len; path.style.strokeDashoffset = reduce ? 0 : len;
@@ -401,7 +441,17 @@
     new IntersectionObserver((en, ob) => { if (en[0].isIntersecting) { go(); ob.disconnect(); } }, { threshold: 0.1 }).observe(path.closest('svg'));
   };
   const fsky = $('.foot__sky path');
-  if (fsky) { fsky.setAttribute('d', skylineD(1600, 358, 300)); if (reduce || !hasGsap || !window.ScrollTrigger) { fsky.style.fillOpacity = '.94'; } }
+  if (fsky) {
+    fsky.setAttribute('d', skylineD(1600, 358, 300));
+    const om = TOWERS.find(t => t[3] === 'omniyat'), win = $('.foot__sky .w603'), glow = $('.foot__sky .w603g');
+    if (om && win && glow) {
+      const w = om[1] * 1600, x1 = om[0] * 1600 + w / 2, wy = 358 - om[2] * 300 * 0.42; // the face toward the Burj, clear of the legal strip
+      const wx = x1 - w * 0.34;
+      win.setAttribute('x', wx.toFixed(1)); win.setAttribute('y', (wy - 4).toFixed(1));
+      glow.setAttribute('cx', (wx + 3.5).toFixed(1)); glow.setAttribute('cy', (wy - 2).toFixed(1));
+    }
+    if (reduce || !hasGsap || !window.ScrollTrigger) { fsky.style.fillOpacity = '.94'; const f = $('.foot'); if (f) f.classList.add('is-lit'); }
+  }
   const csky = $('#cover-sky');
   if (csky) csky.setAttribute('d', skylineD(400, 140, 130));
 

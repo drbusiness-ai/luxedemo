@@ -1,0 +1,13 @@
+/* Self-hosted fonts (Latin subset, woff2). Fetched once by tools/fetch-fonts.sh; no CDN at runtime. */
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(../fonts/archivo-var-latin.woff2) format('woff2')}
+@font-face{font-family:'Archivo Expanded';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/archivo-expanded-500-latin.woff2) format('woff2')}
+@font-face{font-family:'Instrument Serif';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/instrument-serif-400-latin.woff2) format('woff2')}
+@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:swap;src:url(../fonts/instrument-serif-italic-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/ibm-plex-mono-400-latin.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/ibm-plex-mono-500-latin.woff2) format('woff2')}
+/* Metric-matched local fallbacks (size-adjust measured against the webfonts) so the swap causes no layout shift */
+@font-face{font-family:'Archivo Fallback';src:local('Arial'),local('Helvetica Neue'),local('Liberation Sans');size-adjust:98.3%;ascent-override:89.5%;descent-override:21.4%;line-gap-override:0%}
+@font-face{font-family:'Archivo Expanded Fallback';src:local('Arial'),local('Helvetica Neue'),local('Liberation Sans');size-adjust:128%;ascent-override:68.8%;descent-override:16.4%;line-gap-override:0%}
+@font-face{font-family:'Instrument Serif Fallback';font-style:normal;src:local('Times New Roman'),local('Times'),local('Liberation Serif');size-adjust:81.2%;ascent-override:121.9%;descent-override:38.2%;line-gap-override:0%}
+@font-face{font-family:'Instrument Serif Fallback';font-style:italic;src:local('Times New Roman Italic'),local('Times-Italic'),local('Liberation Serif Italic');size-adjust:86.2%;ascent-override:114.8%;descent-override:35.9%;line-gap-override:0%}
+@font-face{font-family:'IBM Plex Mono Fallback';src:local('Courier New'),local('Courier'),local('Liberation Mono');size-adjust:100%;ascent-override:103%;descent-override:28%;line-gap-override:0%}
