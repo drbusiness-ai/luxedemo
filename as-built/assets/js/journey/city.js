@@ -425,7 +425,7 @@ function engravingTexture() {
   x.fillText(spaced, 220, 64);
   x.fillRect(220, 104, 3200, 2);
   x.font = '400 26px "IBM Plex Mono", ui-monospace, monospace';
-  x.fillText('LUXE HAVEN REALTY  ·  MODEL 1:1000  ·  ILLUSTRATIVE', 2600, 40);
+  x.fillText(((window.MF_BRAND && window.MF_BRAND.name) || 'MAFSAN Realty').toUpperCase() + '  ·  MODEL 1:1000  ·  ILLUSTRATIVE', 2600, 40);
   const tex = new THREE.CanvasTexture(c);
   tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.anisotropy = 8;
   return tex;

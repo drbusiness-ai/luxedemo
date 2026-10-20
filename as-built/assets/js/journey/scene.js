@@ -4,12 +4,12 @@ import * as THREE from '../../vendor/three/three.module.min.js';
 import { CHAPTERS, remap, makeTrack, sampleTrack, makeSpring, stepSpring, snapSpring, chapterAt } from './timeline.js';
 import { buildSkyLUT, rowIndex } from './sky.js';
 import { U, COMMON_FRAG } from './materials.js';
-import { buildDistrictMap, makeGround, makeFloor, makePlinth, makeTowers, makeLowRise, makeSkyline, makeScanSheet } from './city.js';
+import { buildDistrictMap, makeGround, makeFloor, makePlinth, makeTowers, makeLowRise, makeSkyline, makeScanSheet } from './city.js?v=20261020-1';
 import { makeHeroes } from './heroes.js';
 import { makeHairlines } from './hairlines.js';
 import { makePost } from './post.js';
-import { attachStory } from './story.js';
-import { makeNight } from './night.js';
+import { attachStory } from './story.js?v=20261020-1';
+import { makeNight } from './night.js?v=20261020-1';
 
 const D2R = Math.PI / 180;
 

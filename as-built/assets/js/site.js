@@ -1,8 +1,21 @@
-/* Luxe Haven Realty · preview build · shared behaviour
+/* AS BUILT · designed and built by MAFSAN · shared behaviour
    Smooth scroll, reveals, count-ups, nav, forms and the NYLA chat simulation.
    No network calls: nothing typed here leaves the browser. */
 (() => {
   window.__lh = true;
+  const BRS = (window.MF_BRAND && window.MF_BRAND.short) || 'MAFSAN';
+
+  /* ---------- light / dark toggle (theme state lives in brand.js) ---------- */
+  const syncToggle = () => {
+    const light = document.documentElement.getAttribute('data-theme') === 'light';
+    document.querySelectorAll('[data-theme-toggle]').forEach(b => {
+      b.setAttribute('aria-pressed', light ? 'true' : 'false');
+      b.setAttribute('aria-label', light ? 'Switch to dark theme' : 'Switch to light theme');
+    });
+  };
+  document.querySelectorAll('[data-theme-toggle]').forEach(b => b.addEventListener('click', () => window.MFTheme && window.MFTheme.toggle()));
+  document.addEventListener('mf:theme', syncToggle);
+  syncToggle();
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -207,7 +220,12 @@
     const main = $('main');
     const tintEl = document.createElement('div'); tintEl.className = 'tint'; tintEl.setAttribute('aria-hidden', 'true');
     main.append(tintEl); document.documentElement.classList.add('has-tint');
-    const tint = c => gsap.to(tintEl, { backgroundColor: c, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+    /* light theme: the same walk through the day, from morning mist to a warm afternoon */
+    const LIGHT = { '#070B1C': '#F4EFE6', '#0A1433': '#EEF1F7', '#0D1840': '#ECEFF7', '#141645': '#EFEDF6', '#1B1546': '#F2ECF3', '#22163F': '#F5EBEE', '#2A1838': '#F7EBE5', '#2E1A33': '#F6EADF' };
+    let curBg = '#070B1C';
+    const tint = (c, d = 1.4) => { curBg = c; const light = document.documentElement.getAttribute('data-theme') === 'light'; gsap.to(tintEl, { backgroundColor: light ? (LIGHT[c] || '#F4EFE6') : c, duration: d, ease: 'power2.out', overwrite: 'auto' }); };
+    tint(curBg, 0);
+    document.addEventListener('mf:theme', () => tint(curBg, 0.6));
     const tinted = $$('[data-bg]');
     tinted.forEach((sec, i) => ScrollTrigger.create({
       trigger: sec, start: 'top 60%', end: 'bottom 60%',
@@ -579,7 +597,7 @@
     function restart() {
       reset();
       plan = ['goal', 'budget', 'timeline', 'finance', 'name', 'whatsapp'];
-      bot("Hi, I'm NYLA, Luxe Haven's assistant. I reply instantly, day or night, in your language.", { wait: reduce ? 150 : 600 });
+      bot(`Hi, I'm NYLA, ${BRS}'s assistant. I reply instantly, day or night, in your language.`, { wait: reduce ? 150 : 600 });
       askNext();
     }
 
@@ -618,11 +636,11 @@
 
     /* language chips: one greeting line in the chosen language */
     const GREET = {
-      en: { t: "Hi, I'm NYLA, Luxe Haven's assistant. I reply instantly, day or night, in your language." },
-      ar: { t: 'مرحباً، أنا نايلا، مساعدة لوكس هيفن. أرد فوراً، ليلاً ونهاراً، وبلغتك.', dir: 'rtl' },
-      ru: { t: 'Здравствуйте, я NYLA, ассистент Luxe Haven. Отвечаю мгновенно, днём и ночью, на вашем языке.' },
-      hi: { t: 'नमस्ते, मैं NYLA हूँ, Luxe Haven की सहायक। दिन हो या रात, मैं तुरंत आपकी भाषा में जवाब देती हूँ।' },
-      zh: { t: '您好，我是 NYLA，Luxe Haven 的助理。无论白天黑夜，我都会用您的语言即时回复。' }
+      en: { t: `Hi, I'm NYLA, ${BRS}'s assistant. I reply instantly, day or night, in your language.` },
+      ar: { t: `مرحباً، أنا نايلا، مساعدة ${BRS}. أرد فوراً، ليلاً ونهاراً، وبلغتك.`, dir: 'rtl' },
+      ru: { t: `Здравствуйте, я NYLA, ассистент ${BRS}. Отвечаю мгновенно, днём и ночью, на вашем языке.` },
+      hi: { t: `नमस्ते, मैं NYLA हूँ, ${BRS} की सहायक। दिन हो या रात, मैं तुरंत आपकी भाषा में जवाब देती हूँ।` },
+      zh: { t: `您好，我是 NYLA，${BRS} 的助理。无论白天黑夜，我都会用您的语言即时回复。` }
     };
     $$('.nyla__langs button', root).forEach(b => b.addEventListener('click', () => {
       $$('.nyla__langs button', root).forEach(x => x.setAttribute('aria-pressed', String(x === b)));

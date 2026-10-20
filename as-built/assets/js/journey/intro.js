@@ -65,14 +65,15 @@ export function loadWordFont() {
 }
 
 /* sample the wordmark into NDC positions. Desktop: one line between the copy column and the rail.
-   Portrait: LUXE / HAVEN stacked in the upper 40%. */
+   Portrait: a two-word wordmark stacks in the upper 40%. The words come from the brand config (brands.js). */
 function sampleWord(n, cssW, cssH, expanded, rand) {
   const portrait = cssW / cssH < 0.8;
   const cv = document.createElement('canvas');
   cv.width = Math.ceil(cssW); cv.height = Math.ceil(cssH);
   const g = cv.getContext('2d', { willReadFrequently: true });
   const face = expanded ? '"Archivo Expanded", "Archivo", sans-serif' : '"Archivo", sans-serif';
-  const lines = portrait ? ['LUXE', 'HAVEN'] : ['LUXE HAVEN'];
+  const wm = ((window.MF_BRAND && window.MF_BRAND.wordmark) || ['MAFSAN']).map(t => String(t).toUpperCase());
+  const lines = portrait && wm.length > 1 ? wm : [wm.join(' ')];
   const track = 0.06;
   const widthAt = (txt, fs) => { g.font = `500 ${fs}px ${face}`; let w = 0; for (const ch of txt) w += g.measureText(ch).width + fs * track; return w - fs * track; };
   const target = portrait ? cssW * 0.8 : cssW * 0.38;

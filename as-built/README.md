@@ -1,6 +1,26 @@
-# Luxe Haven Realty: website preview
+# AS BUILT: real estate website template
 
-A static, clickable preview of the proposed Luxe Haven Realty website, built for client presentation.
+Designed and built by MAFSAN. A static, clickable preview of a premium Dubai brokerage website, built for client presentation.
+The default deploy is the neutral "MAFSAN Realty" showcase; client versions come from one config file.
+
+## Make a client version (five minutes)
+
+1. Open `assets/js/brands.js`, copy the `'luxe-haven'` block, give it a new key (for example `'acme'`) and change the values: name, short name, logo suffix, wordmark, phone, WhatsApp digits, email, website, socials, office unit and tower, maps query, reception photo.
+2. Send the link with the key: `https://luxe-new-demo.vercel.app/?client=acme`. The choice is remembered on that browser, so every page shows the client's name; `?client=default` goes back to the neutral showcase.
+3. For a deploy that should always show one client, set `window.MF_DEFAULT_CLIENT = 'acme'` at the top of `brands.js`.
+
+How it works: the HTML is written with the neutral values of the `mafsan` config. `assets/js/brand.js` swaps every neutral value for the client's (text, links, alt text, the title), rebuilds the footer wordmark, swaps the reception photo, and the 3D intro and NYLA read the name from the same config. Anything inside `data-nobrand` (the "Website by MAFSAN" credit) is never swapped.
+The 3D scene always models One by Omniyat in Business Bay; a client in another tower changes the words, not the model.
+
+## Light and dark theme
+
+- Dark is the default. The switch in the header flips to light; the choice is saved (`localStorage` key `mf-theme`). With no saved choice the site follows the device setting.
+- `brand.js` runs in `<head>` and sets `data-theme` on `<html>` before the first paint, so there is no flash of the wrong theme.
+- Light theme tokens live in `site.css` under `html[data-theme=light]`. The 3D film, NYLA, the sample-note covers and a few art pieces stay dark in both themes on purpose; after the film the 3D city behind the showcase turns into a light drafting print, and the sunset footer becomes a sunrise.
+
+---
+
+Original preview notes follow.
 It uses plain HTML, CSS and vanilla JavaScript with no build step, and makes no network calls apart from Google Fonts.
 No form or chat message is sent anywhere.
 

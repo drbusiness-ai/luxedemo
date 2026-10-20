@@ -5,7 +5,7 @@
    allocated per frame. */
 import * as THREE from '../../vendor/three/three.module.min.js';
 import { U, UNIFORM_DECL } from './materials.js';
-import { MAP } from './city.js';
+import { MAP } from './city.js?v=20261020-1';
 import { remap, makeTrack, sampleTrack } from './timeline.js';
 
 const SQ = Math.SQRT1_2;

@@ -2,7 +2,7 @@
    table that keys the chapter 03 copy to the scan. scene.js calls tick / apply / afterPost / busy. */
 import * as THREE from '../../vendor/three/three.module.min.js';
 import { remap, sampleTrack } from './timeline.js';
-import { makeIntro, loadWordFont, T as IT } from './intro.js';
+import { makeIntro, loadWordFont, T as IT } from './intro.js?v=20261020-1';
 import { makeLens } from './lens.js';
 import { makeLabels } from './labels.js';
 
