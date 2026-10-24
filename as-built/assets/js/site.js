@@ -483,7 +483,101 @@
     const launch = $('.nyla-launch'), teaser = $('.nyla-teaser');
     const html = document.documentElement;
     const DELAY = reduce ? 200 : 850;
-    let state = {}, plan = [], expecting = null, started = false, done = false, queue = Promise.resolve(), langNoted = false, run = 0;
+    let state = {}, plan = [], expecting = null, started = false, done = false, queue = Promise.resolve(), run = 0, cur = 'en';
+
+    /* ---------- the scripted flow in five languages (keys are the English strings; state is always stored in English) ---------- */
+    const T = {
+      ar: { dir: 'rtl',
+        'What brings you to Dubai property?': 'ما الذي يجذبك إلى عقارات دبي؟', 'Buy to live': 'شراء للسكن', 'Invest for yield': 'استثمار للعائد', 'Off-plan': 'على الخارطة', 'Golden Visa': 'الإقامة الذهبية',
+        'Lovely. I will focus on communities, schools and the true cost of moving in.': 'رائع. سأركّز على الأحياء والمدارس والتكلفة الحقيقية للانتقال.',
+        'Smart. I will show you net yield, after service charges, not just the headline number.': 'اختيار ذكي. سأعرض لك صافي العائد بعد رسوم الخدمات، وليس الرقم الدعائي فقط.',
+        'Good. Every project we suggest comes with a due diligence scorecard.': 'جيد. كل مشروع نقترحه يأتي مع بطاقة تقييم للعناية الواجبة.',
+        'Noted. Property worth AED 2M or more can support a 10-year Golden Visa application, and we guide you through it.': 'تمام. العقار بقيمة مليوني درهم أو أكثر يدعم طلب الإقامة الذهبية لعشر سنوات، ونرافقك في الإجراءات.',
+        'What budget are you working with?': 'ما الميزانية التي تعمل ضمنها؟', 'Under AED 2M': 'أقل من 2 مليون درهم', 'AED 2–5M': '2 إلى 5 ملايين درهم', 'AED 5–10M': '5 إلى 10 ملايين درهم', 'AED 10M+': 'أكثر من 10 ملايين درهم',
+        'Worth knowing: the Golden Visa property route starts at AED 2M in value. Your advisor can show options close to that line.': 'للعلم: مسار الإقامة الذهبية عبر العقار يبدأ من قيمة مليوني درهم. يمكن لمستشارك عرض خيارات قريبة من هذا الحد.',
+        'And your timeline?': 'وما الإطار الزمني لديك؟', 'This month': 'هذا الشهر', '1–3 months': '1 إلى 3 أشهر', '3–6 months': '3 إلى 6 أشهر', 'Just researching': 'أبحث فقط',
+        'No rush at all. I can send you the weekly Market Pulse in the meantime.': 'لا عجلة أبداً. يمكنني إرسال نبض السوق الأسبوعي لك في هذه الأثناء.',
+        'Will you pay cash or use a mortgage?': 'هل ستدفع نقداً أم عبر تمويل عقاري؟', 'Cash': 'نقداً', 'Mortgage': 'تمويل عقاري', 'Not sure yet': 'لم أقرر بعد',
+        'I will include mortgage registration and bank fees in your numbers.': 'سأضيف رسوم تسجيل الرهن ورسوم البنك إلى أرقامك.', 'We can model both, side by side.': 'يمكننا حساب الخيارين جنباً إلى جنب.',
+        'What name should your advisor use?': 'بأي اسم يناديك مستشارك؟', 'Type your name': 'اكتب اسمك',
+        'Thanks{name}. And the best WhatsApp number to reach you?': 'شكراً{name}. وما أفضل رقم واتساب للتواصل معك؟',
+        'Could you add it with the country code? For example +971 50 123 4567.': 'هل يمكنك إضافته مع رمز الدولة؟ مثلاً ‎+971 50 123 4567.',
+        'Or type your answer': 'أو اكتب إجابتك', 'Type a message': 'اكتب رسالة',
+        'Thank you. Your advisor will pick this up on the call.': 'شكراً لك. سيتابع مستشارك ذلك في المكالمة.', "Noted, I'll pass that to your advisor.": 'تم، سأنقل ذلك إلى مستشارك.',
+        'Your brief': 'ملخص طلبك', 'Looking to': 'الهدف', 'Budget': 'الميزانية', 'Timeline': 'الإطار الزمني', 'Payment': 'طريقة الدفع', 'Name': 'الاسم', 'WhatsApp': 'واتساب', 'Notes': 'ملاحظات',
+        'An advisor has been notified and will call you shortly, usually within minutes during business hours.': 'تم إبلاغ مستشار وسيتصل بك قريباً، عادةً خلال دقائق في ساعات العمل.',
+        "Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team's CRM.": 'معاينة: لم يُرسل شيء. في النسخة الحية تجري المحادثة على واتساب ويصل الملخص إلى نظام الفريق.',
+        'See my true cost': 'اعرض تكلفتي الحقيقية', 'Off-plan scorecard': 'بطاقة تقييم المشاريع', 'Start over': 'ابدأ من جديد',
+        'One quick question': 'سؤال سريع واحد', 'Two quick questions': 'سؤالان سريعان', 'A few quick questions': 'بضعة أسئلة سريعة', ' so your advisor calls you fully prepared.': ' ليتصل بك مستشارك مستعداً تماماً.' },
+      ru: {
+        'What brings you to Dubai property?': 'Что вас интересует в недвижимости Дубая?', 'Buy to live': 'Купить для жизни', 'Invest for yield': 'Инвестиции ради дохода', 'Off-plan': 'На этапе строительства', 'Golden Visa': 'Золотая виза',
+        'Lovely. I will focus on communities, schools and the true cost of moving in.': 'Отлично. Сосредоточусь на районах, школах и реальной стоимости переезда.',
+        'Smart. I will show you net yield, after service charges, not just the headline number.': 'Разумно. Покажу чистую доходность после сервисных сборов, а не только рекламную цифру.',
+        'Good. Every project we suggest comes with a due diligence scorecard.': 'Хорошо. К каждому проекту, который мы предлагаем, прилагается карта проверки застройщика.',
+        'Noted. Property worth AED 2M or more can support a 10-year Golden Visa application, and we guide you through it.': 'Принято. Недвижимость от 2 млн дирхамов даёт право на заявку на 10-летнюю Золотую визу, и мы сопровождаем вас на каждом шаге.',
+        'What budget are you working with?': 'На какой бюджет вы рассчитываете?', 'Under AED 2M': 'До 2 млн AED', 'AED 2–5M': '2–5 млн AED', 'AED 5–10M': '5–10 млн AED', 'AED 10M+': 'Более 10 млн AED',
+        'Worth knowing: the Golden Visa property route starts at AED 2M in value. Your advisor can show options close to that line.': 'Важно знать: Золотая виза через недвижимость начинается от 2 млн дирхамов. Ваш консультант покажет варианты у этой границы.',
+        'And your timeline?': 'Какие у вас сроки?', 'This month': 'В этом месяце', '1–3 months': '1–3 месяца', '3–6 months': '3–6 месяцев', 'Just researching': 'Пока изучаю',
+        'No rush at all. I can send you the weekly Market Pulse in the meantime.': 'Никакой спешки. Пока могу присылать еженедельный обзор рынка.',
+        'Will you pay cash or use a mortgage?': 'Оплата наличными или ипотека?', 'Cash': 'Наличные', 'Mortgage': 'Ипотека', 'Not sure yet': 'Пока не решил(а)',
+        'I will include mortgage registration and bank fees in your numbers.': 'Включу регистрацию ипотеки и банковские сборы в ваши расчёты.', 'We can model both, side by side.': 'Посчитаем оба варианта рядом.',
+        'What name should your advisor use?': 'Как к вам обращаться консультанту?', 'Type your name': 'Введите имя',
+        'Thanks{name}. And the best WhatsApp number to reach you?': 'Спасибо{name}. Какой номер WhatsApp удобнее для связи?',
+        'Could you add it with the country code? For example +971 50 123 4567.': 'Укажите, пожалуйста, номер с кодом страны. Например +971 50 123 4567.',
+        'Or type your answer': 'Или напишите ответ', 'Type a message': 'Напишите сообщение',
+        'Thank you. Your advisor will pick this up on the call.': 'Спасибо. Консультант обсудит это с вами на звонке.', "Noted, I'll pass that to your advisor.": 'Принято, передам консультанту.',
+        'Your brief': 'Ваш запрос', 'Looking to': 'Цель', 'Budget': 'Бюджет', 'Timeline': 'Сроки', 'Payment': 'Оплата', 'Name': 'Имя', 'WhatsApp': 'WhatsApp', 'Notes': 'Заметки',
+        'An advisor has been notified and will call you shortly, usually within minutes during business hours.': 'Консультант уведомлён и скоро вам позвонит, обычно в течение нескольких минут в рабочее время.',
+        "Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team's CRM.": 'Предпросмотр: ничего не отправлено. В рабочей версии диалог идёт в WhatsApp, а запрос попадает в CRM команды.',
+        'See my true cost': 'Моя полная стоимость', 'Off-plan scorecard': 'Карта проверки проекта', 'Start over': 'Начать заново',
+        'One quick question': 'Один быстрый вопрос', 'Two quick questions': 'Два быстрых вопроса', 'A few quick questions': 'Несколько быстрых вопросов', ' so your advisor calls you fully prepared.': ', чтобы консультант позвонил вам полностью подготовленным.' },
+      hi: {
+        'What brings you to Dubai property?': 'दुबई प्रॉपर्टी में आपकी रुचि किस लिए है?', 'Buy to live': 'रहने के लिए खरीदना', 'Invest for yield': 'किराये की आय के लिए निवेश', 'Off-plan': 'ऑफ-प्लान', 'Golden Visa': 'गोल्डन वीज़ा',
+        'Lovely. I will focus on communities, schools and the true cost of moving in.': 'बहुत अच्छा। मैं कम्युनिटी, स्कूल और शिफ्ट होने की असली लागत पर ध्यान दूँगी।',
+        'Smart. I will show you net yield, after service charges, not just the headline number.': 'समझदारी भरा फैसला। मैं सर्विस चार्ज के बाद की नेट यील्ड दिखाऊँगी, सिर्फ हेडलाइन नंबर नहीं।',
+        'Good. Every project we suggest comes with a due diligence scorecard.': 'ठीक है। हमारे सुझाए हर प्रोजेक्ट के साथ ड्यू डिलिजेंस स्कोरकार्ड आता है।',
+        'Noted. Property worth AED 2M or more can support a 10-year Golden Visa application, and we guide you through it.': 'नोट कर लिया। AED 20 लाख या उससे ऊपर की प्रॉपर्टी 10 साल के गोल्डन वीज़ा आवेदन में मदद करती है, और हम पूरी प्रक्रिया में साथ रहते हैं।',
+        'What budget are you working with?': 'आपका बजट क्या है?', 'Under AED 2M': 'AED 20 लाख से कम', 'AED 2–5M': 'AED 20–50 लाख', 'AED 5–10M': 'AED 50 लाख–1 करोड़', 'AED 10M+': 'AED 1 करोड़ से ऊपर',
+        'Worth knowing: the Golden Visa property route starts at AED 2M in value. Your advisor can show options close to that line.': 'जानने लायक: प्रॉपर्टी से गोल्डन वीज़ा का रास्ता AED 20 लाख की वैल्यू से शुरू होता है। आपके एडवाइज़र इसके आसपास के विकल्प दिखा सकते हैं।',
+        'And your timeline?': 'और आपकी समय-सीमा?', 'This month': 'इसी महीने', '1–3 months': '1–3 महीने', '3–6 months': '3–6 महीने', 'Just researching': 'अभी सिर्फ रिसर्च',
+        'No rush at all. I can send you the weekly Market Pulse in the meantime.': 'कोई जल्दी नहीं। तब तक मैं आपको साप्ताहिक मार्केट पल्स भेज सकती हूँ।',
+        'Will you pay cash or use a mortgage?': 'भुगतान कैश में होगा या मॉर्गेज से?', 'Cash': 'कैश', 'Mortgage': 'मॉर्गेज', 'Not sure yet': 'अभी तय नहीं',
+        'I will include mortgage registration and bank fees in your numbers.': 'मैं मॉर्गेज रजिस्ट्रेशन और बैंक फीस आपके आँकड़ों में जोड़ दूँगी।', 'We can model both, side by side.': 'हम दोनों विकल्प साथ-साथ निकाल सकते हैं।',
+        'What name should your advisor use?': 'आपके एडवाइज़र आपको किस नाम से बुलाएँ?', 'Type your name': 'अपना नाम लिखें',
+        'Thanks{name}. And the best WhatsApp number to reach you?': 'धन्यवाद{name}। और आपसे संपर्क के लिए सबसे अच्छा WhatsApp नंबर?',
+        'Could you add it with the country code? For example +971 50 123 4567.': 'कृपया कंट्री कोड के साथ लिखें, जैसे +971 50 123 4567।',
+        'Or type your answer': 'या अपना जवाब लिखें', 'Type a message': 'संदेश लिखें',
+        'Thank you. Your advisor will pick this up on the call.': 'धन्यवाद। आपके एडवाइज़र कॉल पर इसे आगे बढ़ाएँगे।', "Noted, I'll pass that to your advisor.": 'नोट कर लिया, मैं यह आपके एडवाइज़र तक पहुँचा दूँगी।',
+        'Your brief': 'आपका ब्रीफ', 'Looking to': 'उद्देश्य', 'Budget': 'बजट', 'Timeline': 'समय-सीमा', 'Payment': 'भुगतान', 'Name': 'नाम', 'WhatsApp': 'WhatsApp', 'Notes': 'नोट्स',
+        'An advisor has been notified and will call you shortly, usually within minutes during business hours.': 'एडवाइज़र को सूचना भेज दी गई है, वे जल्द कॉल करेंगे, आमतौर पर कामकाजी घंटों में कुछ मिनटों में।',
+        "Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team's CRM.": 'प्रीव्यू: कुछ भेजा नहीं गया। लाइव में यह बातचीत WhatsApp पर चलती है और ब्रीफ टीम के CRM में पहुँचता है।',
+        'See my true cost': 'मेरी असली लागत देखें', 'Off-plan scorecard': 'ऑफ-प्लान स्कोरकार्ड', 'Start over': 'फिर से शुरू करें',
+        'One quick question': 'एक छोटा सवाल', 'Two quick questions': 'दो छोटे सवाल', 'A few quick questions': 'कुछ छोटे सवाल', ' so your advisor calls you fully prepared.': ', ताकि आपके एडवाइज़र पूरी तैयारी के साथ कॉल करें।' },
+      zh: {
+        'What brings you to Dubai property?': '您关注迪拜房产的目的是什么？', 'Buy to live': '自住', 'Invest for yield': '投资收益', 'Off-plan': '期房', 'Golden Visa': '黄金签证',
+        'Lovely. I will focus on communities, schools and the true cost of moving in.': '很好。我会重点介绍社区、学校和入住的真实成本。',
+        'Smart. I will show you net yield, after service charges, not just the headline number.': '明智的选择。我会展示扣除物业费后的净收益，而不只是宣传数字。',
+        'Good. Every project we suggest comes with a due diligence scorecard.': '好的。我们推荐的每个项目都附有尽职调查评分卡。',
+        'Noted. Property worth AED 2M or more can support a 10-year Golden Visa application, and we guide you through it.': '收到。价值200万迪拉姆及以上的房产可支持申请10年黄金签证，我们全程协助。',
+        'What budget are you working with?': '您的预算范围是多少？', 'Under AED 2M': '200万迪拉姆以下', 'AED 2–5M': '200–500万迪拉姆', 'AED 5–10M': '500–1000万迪拉姆', 'AED 10M+': '1000万迪拉姆以上',
+        'Worth knowing: the Golden Visa property route starts at AED 2M in value. Your advisor can show options close to that line.': '提示：通过房产申请黄金签证的门槛是200万迪拉姆。您的顾问可以展示接近这一门槛的选择。',
+        'And your timeline?': '您的时间计划是？', 'This month': '本月', '1–3 months': '1–3个月', '3–6 months': '3–6个月', 'Just researching': '目前只是了解',
+        'No rush at all. I can send you the weekly Market Pulse in the meantime.': '完全不着急。在此期间我可以为您发送每周市场脉动。',
+        'Will you pay cash or use a mortgage?': '您计划全款还是贷款？', 'Cash': '全款', 'Mortgage': '贷款', 'Not sure yet': '尚未确定',
+        'I will include mortgage registration and bank fees in your numbers.': '我会把贷款登记费和银行费用计入您的数字。', 'We can model both, side by side.': '我们可以把两种方案并排测算。',
+        'What name should your advisor use?': '顾问应如何称呼您？', 'Type your name': '请输入您的姓名',
+        'Thanks{name}. And the best WhatsApp number to reach you?': '谢谢{name}。方便联系您的 WhatsApp 号码是？',
+        'Could you add it with the country code? For example +971 50 123 4567.': '请加上国家代码，例如 +971 50 123 4567。',
+        'Or type your answer': '或输入您的回答', 'Type a message': '输入消息',
+        'Thank you. Your advisor will pick this up on the call.': '谢谢。您的顾问会在通话中跟进。', "Noted, I'll pass that to your advisor.": '收到，我会转告您的顾问。',
+        'Your brief': '您的需求摘要', 'Looking to': '目的', 'Budget': '预算', 'Timeline': '时间', 'Payment': '付款方式', 'Name': '姓名', 'WhatsApp': 'WhatsApp', 'Notes': '备注',
+        'An advisor has been notified and will call you shortly, usually within minutes during business hours.': '已通知顾问，工作时间内通常几分钟内会致电您。',
+        "Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team's CRM.": '预览：未发送任何内容。正式版中对话在 WhatsApp 进行，需求摘要会进入团队的 CRM。',
+        'See my true cost': '查看我的真实成本', 'Off-plan scorecard': '期房评分卡', 'Start over': '重新开始',
+        'One quick question': '一个小问题', 'Two quick questions': '两个小问题', 'A few quick questions': '几个小问题', ' so your advisor calls you fully prepared.': '，让顾问在致电前做好充分准备。' }
+    };
+    const tr = (k) => (cur !== 'en' && T[cur] && T[cur][k]) || k;
+    const L = (opts = {}) => (cur === 'en' ? opts : Object.assign({ lang: cur, dir: T[cur].dir }, opts));
 
     const now = () => new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dubai', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
     const toBottom = () => { msgs.scrollTop = msgs.scrollHeight; };
@@ -503,7 +597,7 @@
     const bot = (inner, opts = {}) => {
       const my = run;
       queue = queue.then(() => my === run ? typing(opts.wait || DELAY + Math.min(900, inner.length * 6)) : null)
-                   .then(() => { if (my === run) add(inner, opts.sys ? 'sys' : 'bot', opts); });
+                   .then(() => { if (my === run) add(inner, opts.sys ? 'sys' : 'bot', L(opts)); });
       return queue;
     };
     const setQuick = (items) => {
@@ -531,68 +625,74 @@
       finance: { q: 'Will you pay cash or use a mortgage?', opts: ['Cash', 'Mortgage', 'Not sure yet'],
         ack: v => v === 'Mortgage' ? 'I will include mortgage registration and bank fees in your numbers.' : (v === 'Not sure yet' ? 'We can model both, side by side.' : null) },
       name: { q: 'What name should your advisor use?', free: 'Type your name' },
-      whatsapp: { q: () => `Thanks${first() ? ', ' + esc(first()) : ''}. And the best WhatsApp number to reach you?`, free: '+971 50 000 0000',
+      whatsapp: { q: () => tr('Thanks{name}. And the best WhatsApp number to reach you?').replace('{name}', first() ? ', ' + esc(first()) : ''), free: '+971 50 000 0000',
         valid: waOk, retry: 'Could you add it with the country code? For example +971 50 123 4567.' }
     };
     const LABELS = { goal: 'Looking to', budget: 'Budget', timeline: 'Timeline', finance: 'Payment', name: 'Name', whatsapp: 'WhatsApp', notes: 'Notes' };
     const norm = v => String(v).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-    const matchOpt = (opts, v) => { const n = norm(v); return opts.find(o => norm(o) === n) || (n.length >= 3 ? opts.find(o => norm(o).startsWith(n)) : null) || null; };
+    const matchOpt = (opts, v) => { const n = norm(v); return opts.find(o => norm(o) === n || tr(o) === String(v).trim()) || (n.length >= 3 ? opts.find(o => norm(o).startsWith(n)) : null) || null; };
 
+    /* quick replies and placeholder for the pending step, in the current language */
+    function showPrompt(s) {
+      input.placeholder = tr(s.free || 'Or type your answer');
+      setQuick((s.opts || []).map(o => ({ label: tr(o), onClick: () => answer(o) })));
+    }
     function askNext() {
       const key = plan.find(k => !state[k]);
       if (!key) return finish();
       const s = STEPS[key];
       expecting = key;
-      bot(typeof s.q === 'function' ? s.q() : s.q).then(() => {
+      bot(typeof s.q === 'function' ? s.q() : tr(s.q)).then(() => {
         if (expecting !== key) return;
-        input.placeholder = s.free || 'Or type your answer';
-        setQuick((s.opts || []).map(o => ({ label: o, onClick: () => answer(o) })));
+        showPrompt(s);
         if (s.free && finePointer) input.focus();
       });
     }
     function answer(v) {
       v = String(v).trim(); if (!v) return;
-      if (done) { setQuick([]); add(esc(v), 'me'); bot('Thank you. Your advisor will pick this up on the call.'); return; }
+      if (done) { setQuick([]); add(esc(v), 'me'); bot(tr('Thank you. Your advisor will pick this up on the call.')); return; }
       if (!expecting) return;
       const key = expecting, s = STEPS[key];
-      setQuick([]); add(esc(v), 'me');
-      if (s.valid && !s.valid(v)) { bot(s.retry).then(() => { input.placeholder = s.free; }); return; }
+      setQuick([]);
+      if (s.valid && !s.valid(v)) { add(esc(v), 'me'); bot(tr(s.retry)).then(() => { input.placeholder = tr(s.free); }); return; }
       if (s.opts) {
         const hit = matchOpt(s.opts, v);
         if (!hit) {
           /* free text at a multiple-choice step: keep it for the advisor, then ask again */
+          add(esc(v), 'me');
           state.notes = state.notes ? state.notes + ' · ' + v : v;
           expecting = null;
-          bot("Noted, I'll pass that to your advisor.");
+          bot(tr("Noted, I'll pass that to your advisor."));
           askNext();
           return;
         }
         v = hit;
       }
+      add(esc(s.opts ? tr(v) : v), 'me'); /* the visitor's bubble shows the label they tapped, in their language */
       state[key] = v; expecting = null;
       const a = s.ack && s.ack(v);
-      if (a) bot(a);
+      if (a) bot(tr(a));
       askNext();
     }
     function finish() {
-      done = true; expecting = null; input.placeholder = 'Type a message';
-      const rows = Object.keys(LABELS).filter(k => state[k]).map(k => `<li><span>${LABELS[k]}</span><b>${esc(state[k])}</b></li>`).join('');
-      bot(`<strong>Your brief</strong><ul>${rows}</ul>`, { card: true });
-      bot('An advisor has been notified and will call you shortly, usually within minutes during business hours.');
-      bot('Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team\'s CRM.', { sys: true, wait: 400 }).then(() => {
+      done = true; expecting = null; input.placeholder = tr('Type a message');
+      const rows = Object.keys(LABELS).filter(k => state[k]).map(k => `<li><span>${tr(LABELS[k])}</span><b>${esc(tr(state[k]))}</b></li>`).join('');
+      bot(`<strong>${tr('Your brief')}</strong><ul>${rows}</ul>`, { card: true });
+      bot(tr('An advisor has been notified and will call you shortly, usually within minutes during business hours.'));
+      bot(tr("Preview: nothing was sent. Live, this runs on WhatsApp and the brief lands in the team's CRM."), { sys: true, wait: 400 }).then(() => {
         const onCalc = !!document.getElementById('calculator');
         setQuick([
-          onCalc ? { label: 'See my true cost', onClick: () => { close(); const t = document.querySelector('.results') || document.getElementById('calculator'); if (t) scrollTo(t); } }
-                 : { label: 'See my true cost', href: 'true-cost-calculator.html' },
-          { label: 'Off-plan scorecard', href: 'off-plan-scorecard.html' },
-          { label: 'Start over', onClick: () => restart() }
+          onCalc ? { label: tr('See my true cost'), onClick: () => { close(); const t = document.querySelector('.results') || document.getElementById('calculator'); if (t) scrollTo(t); } }
+                 : { label: tr('See my true cost'), href: 'true-cost-calculator.html' },
+          { label: tr('Off-plan scorecard'), href: 'off-plan-scorecard.html' },
+          { label: tr('Start over'), onClick: () => restart() }
         ]);
       });
     }
     function reset() {
       run++; queue = Promise.resolve();
       msgs.innerHTML = '<p class="nyla__day">Today</p>'; setQuick([]);
-      state = {}; expecting = null; done = false; started = true; langNoted = false;
+      state = {}; expecting = null; done = false; started = true; cur = 'en';
       $$('.nyla__langs button', root).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === 'en')));
     }
     function restart() {
@@ -646,11 +746,12 @@
     $$('.nyla__langs button', root).forEach(b => b.addEventListener('click', () => {
       $$('.nyla__langs button', root).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
       const g = GREET[b.dataset.lang];
-      bot(esc(g.t), { lang: b.dataset.lang, dir: g.dir, wait: reduce ? 150 : 500 });
-      if (b.dataset.lang !== 'en' && !langNoted) {
-        langNoted = true;
-        bot('Preview shows the greeting only. Live, NYLA carries the whole conversation in the language you choose.', { sys: true, wait: 300 });
-      }
+      cur = b.dataset.lang;
+      bot(esc(g.t), { lang: cur, dir: g.dir, wait: reduce ? 150 : 500 }).then(() => {
+        /* the pending question's quick replies and placeholder switch language too */
+        if (expecting && STEPS[expecting]) showPrompt(STEPS[expecting]);
+        else if (done) input.placeholder = tr('Type a message');
+      });
     }));
 
     /* teaser bubble: at most once per session, never over a form, gone after 8 seconds */
@@ -714,7 +815,7 @@
       }
       bot('Preview: nothing was sent. Live, this message goes out on WhatsApp and email.', { sys: true, wait: 300 });
       const left = plan.filter(k => !state[k]).length;
-      if (left) bot(`${left === 1 ? 'One quick question' : left === 2 ? 'Two quick questions' : 'A few quick questions'} so your advisor calls you fully prepared.`, { wait: 500 });
+      if (left) bot(tr(left === 1 ? 'One quick question' : left === 2 ? 'Two quick questions' : 'A few quick questions') + tr(' so your advisor calls you fully prepared.'), { wait: 500 });
       html.classList.add('nyla-open'); root.setAttribute('aria-hidden', 'false');
       if (teaser) teaser.classList.remove('is-on');
       store.set('lh-nyla-seen', '1');
