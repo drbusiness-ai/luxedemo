@@ -3,6 +3,7 @@
    No network calls: nothing typed here leaves the browser. */
 (() => {
   window.__lh = true;
+  try { console.log('%cAS BUILT · designed and built by MAFSAN · © 2026 · proprietary, shown for presentation only. Not licensed for copying, cloning or AI training.', 'color:#C99A3B;font-weight:600'); } catch (e) { /* no console */ }
   const BRS = (window.MF_BRAND && window.MF_BRAND.short) || 'MAFSAN';
 
   /* ---------- light / dark toggle (theme state lives in brand.js) ---------- */

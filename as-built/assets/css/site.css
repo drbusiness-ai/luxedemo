@@ -1268,3 +1268,16 @@ html.has-cursor :is(input,select,textarea){cursor:auto}
   .office__media figure{clip-path:none!important}
 }
 .office__media figure.clipr img{transition:none}
+
+/* ---------- footer wordmark: fit long brand names on one line (brand.js sets --wm-n) ---------- */
+.foot__word span{font-size:min(clamp(44px,10.4vw,196px),calc(92vw / (var(--wm-n,6) * .88)))}
+/* ---------- brand motif "wolf" (brands.js motif:'wolf'): a moon and pack eyes in the evening footer ---------- */
+.wolf-moon{position:absolute;right:clamp(16px,8vw,140px);top:clamp(28px,7vh,90px);width:clamp(64px,8vw,128px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 34%,#FFFBEF 0%,#F2E3C2 48%,#C9B18A 100%);box-shadow:0 0 48px 14px rgba(255,241,214,.32),0 0 140px 40px rgba(255,200,140,.12);opacity:.92;pointer-events:none;z-index:1;will-change:transform}
+.wolf-moon::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 62% 58%,rgba(120,95,70,.18) 0 9%,transparent 10%),radial-gradient(circle at 34% 66%,rgba(120,95,70,.14) 0 6%,transparent 7%),radial-gradient(circle at 58% 30%,rgba(120,95,70,.12) 0 5%,transparent 6%)}
+html[data-theme=light] .wolf-moon{opacity:.35;box-shadow:none}
+.wolf-eyes{position:absolute;left:0;right:0;bottom:0;height:34vh;pointer-events:none;z-index:2}
+.wolf-eyes i{position:absolute;left:var(--x);bottom:var(--y);width:22px;height:6px;opacity:0;background:radial-gradient(circle at 25% 50%,#FFC46A 0 2.4px,transparent 3px),radial-gradient(circle at 75% 50%,#FFC46A 0 2.4px,transparent 3px);filter:drop-shadow(0 0 4px rgba(255,180,80,.9));animation:wolfEyes 9s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes wolfEyes{0%,55%{opacity:0}60%,72%{opacity:.95}74%{opacity:.1}76%,88%{opacity:.95}93%,100%{opacity:0}}
+html[data-theme=light] .wolf-eyes{display:none}
+@media (prefers-reduced-motion:reduce){.wolf-eyes i{animation:none;opacity:.6}}
+@media (max-width:760px){.wolf-moon{right:18px;top:22px;width:56px}.wolf-eyes{height:22vh}}

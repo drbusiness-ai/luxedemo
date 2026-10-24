@@ -1,0 +1,4 @@
+# AS BUILT template · Copyright 2026 MAFSAN · all rights reserved · presentation only
+# Not licensed for crawling, indexing, scraping or AI training. See /ai.txt and /LICENSE.txt
+User-agent: *
+Disallow: /

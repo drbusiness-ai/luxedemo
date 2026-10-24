@@ -1,0 +1,8 @@
+AS BUILT real estate website template
+Copyright (c) 2026 MAFSAN. All rights reserved.
+
+This work (HTML, CSS, JavaScript, the three.js scene and its modules, images, copy and design)
+is proprietary and is published online solely so that MAFSAN can present it to prospective clients.
+No part of it may be copied, reproduced, modified, distributed, used as training or reference data
+for machine learning, or used to create a derivative website, without MAFSAN's prior written permission.
+Viewing the presentation does not grant any licence.

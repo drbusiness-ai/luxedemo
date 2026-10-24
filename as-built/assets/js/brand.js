@@ -47,6 +47,7 @@
   for (k in (BR[key] || {})) B[k] = BR[key][k];
   B.key = key;
   window.MF_BRAND = B;
+  html.setAttribute('data-client', key);
   var swap = key !== 'mafsan';
   if (swap) html.classList.add('mf-brand-pending');
 
@@ -80,7 +81,17 @@
       var t = (B.wordmark || [B.short]).join(' ').toUpperCase(), h = '';
       for (var i = 0; i < t.length; i++) h += t[i] === ' ' ? '<span class="sp"></span>' : '<span>' + t[i] + '</span>';
       el.innerHTML = h;
+      /* long wordmarks shrink to fit one line: letters count 1, spaces .4 */
+      el.style.setProperty('--wm-n', String(t.replace(/ /g, '').length + (t.split(' ').length - 1) * 0.4));
     });
+    /* brand motif: the wolf pack gets a moon and a few pairs of eyes in the evening footer */
+    var fi = document.querySelector('.foot__inner');
+    if (B.motif === 'wolf' && fi && !fi.querySelector('.wolf-moon')) {
+      var moon = document.createElement('div'); moon.className = 'wolf-moon'; moon.setAttribute('aria-hidden', 'true');
+      var eyes = document.createElement('div'); eyes.className = 'wolf-eyes'; eyes.setAttribute('aria-hidden', 'true');
+      eyes.innerHTML = '<i style="--x:14%;--y:9%;--d:0s"></i><i style="--x:31%;--y:5%;--d:2.3s"></i><i style="--x:63%;--y:7%;--d:4.1s"></i><i style="--x:84%;--y:11%;--d:1.2s"></i>';
+      fi.insertBefore(moon, fi.firstChild); fi.appendChild(eyes);
+    }
     /* the reception photo */
     document.querySelectorAll('[data-brand-photo]').forEach(function (fig) {
       var im = fig.querySelector('img'), cap = fig.querySelector('figcaption');

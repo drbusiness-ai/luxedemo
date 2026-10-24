@@ -54,7 +54,8 @@ window.MF_BRANDS = {
     name: 'Wolves International Real Estate',
     short: 'Wolves International',
     suffix: 'Real Estate',
-    wordmark: ['WOLVES', 'INTERNATIONAL'],
+    wordmark: ['WE ARE', 'WOLVES'],       // footer wordmark; the full name is too long for the letter wall
+    motif: 'wolf',                       // moon + pack eyes in the footer (brand.js + site.css)
     phone: '+971 4 000 0000',            // PLACEHOLDER: replace with the brokerage's real line
     phoneRaw: '97140000000',             // PLACEHOLDER
     email: 'info@wolvesint.ae',          // from wolvesint.ae/contact
