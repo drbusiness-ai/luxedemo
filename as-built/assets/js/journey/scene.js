@@ -8,7 +8,7 @@ import { buildDistrictMap, makeGround, makeFloor, makePlinth, makeTowers, makeLo
 import { makeHeroes } from './heroes.js';
 import { makeHairlines } from './hairlines.js';
 import { makePost } from './post.js';
-import { attachStory } from './story.js?v=20261020-1';
+import { attachStory } from './story.js?v=20261024-2';
 import { makeNight } from './night.js?v=20261020-1';
 
 const D2R = Math.PI / 180;

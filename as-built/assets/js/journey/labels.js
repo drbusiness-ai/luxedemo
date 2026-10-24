@@ -7,9 +7,10 @@ const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
 
 export function makeLabels({ root, camera, anchor }) {
   if (!root) return { apply() {}, hide() {} };
+  const BR = window.MF_BRAND || {}, esc = (t) => String(t).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const el = document.createElement('div');
   el.className = 'jl jl--603';
-  el.innerHTML = '<i class="jl__ring"></i><i class="jl__lead jl__lead--a"></i><i class="jl__lead jl__lead--b"></i><span class="jl__txt"><b>Office 603</b><span class="jl__sep"> · </span>One by Omniyat</span>';
+  el.innerHTML = '<i class="jl__ring"></i><i class="jl__lead jl__lead--a"></i><i class="jl__lead jl__lead--b"></i><span class="jl__txt"><b>' + esc(BR.unit || 'Office 603') + '</b><span class="jl__sep"> · </span>' + esc(BR.tower || 'One by Omniyat') + '</span>';
   root.appendChild(el);
   const ring = el.querySelector('.jl__ring'), la = el.querySelector('.jl__lead--a'), lb = el.querySelector('.jl__lead--b'), txt = el.querySelector('.jl__txt');
   const v = new THREE.Vector3();

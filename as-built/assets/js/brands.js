@@ -23,9 +23,12 @@ window.MF_BRANDS = {
     unit: 'Office 603',                  // the lit window in the 3D scene
     unitNo: '603',
     tower: 'One by Omniyat',             // the 3D scene models this tower; change the words only
+    area: 'Business Bay',                // address lines only (elements marked data-brand-area); community pages keep their own area
+    developer: 'Omniyat',                // the "our address" project panel; the developer marquee is not touched
     mapsQuery: 'One%20by%20Omniyat%2C%20Business%20Bay%2C%20Dubai',
     receptionPhoto: 'assets/img/omniyat-street-duo.webp',
-    receptionCaption: 'Business Bay · street level'
+    receptionCaption: 'Business Bay · street level',
+    towerPhoto: 'assets/img/omniyat-tower-duo.webp' // '' hides the tower photo for a client in another building
   },
 
   /* example client variant */
@@ -64,8 +67,11 @@ window.MF_BRANDS = {
     unit: 'Level 20',                    // 20th floor, Al Moosa Tower 1 (wolvesint.ae/contact)
     unitNo: '20',
     tower: 'Al Moosa Tower 1',           // 3D scene still models One by Omniyat; words only
+    area: 'Trade Centre',
+    developer: 'Al Moosa',
     mapsQuery: 'Al%20Moosa%20Tower%201%2C%20Sheikh%20Zayed%20Road%2C%20Dubai',
     receptionPhoto: '',                  // no office photos yet: the reception figure is hidden
-    receptionCaption: ''
+    receptionCaption: '',
+    towerPhoto: ''                       // the Omniyat tower photo is hidden too
   }
 };

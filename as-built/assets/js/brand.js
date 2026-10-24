@@ -52,11 +52,14 @@
   if (swap) html.classList.add('mf-brand-pending');
 
   var ATTRS = ['alt', 'aria-label', 'content', 'title', 'href', 'placeholder', 'data-cursor'];
+  /* fields swapped only inside [data-brand-area] (address lines), never page-wide: the community guide keeps its area name */
+  var SCOPED = ['area', 'developer'];
   function apply(root) {
     root = root || document;
     var map = {}, list = [], name;
     if (swap) {
       for (name in base) {
+        if (SCOPED.indexOf(name) !== -1) continue;
         if (typeof base[name] !== 'string' || base[name] === B[name] || !base[name]) continue;
         map[base[name]] = B[name]; list.push(base[name]);
       }
@@ -92,6 +95,23 @@
       eyes.innerHTML = '<i style="--x:14%;--y:9%;--d:0s"></i><i style="--x:31%;--y:5%;--d:2.3s"></i><i style="--x:63%;--y:7%;--d:4.1s"></i><i style="--x:84%;--y:11%;--d:1.2s"></i>';
       fi.insertBefore(moon, fi.firstChild); fi.appendChild(eyes);
     }
+    /* address-only swaps (area, developer) inside elements marked data-brand-area, text and attributes */
+    if (swap) {
+      var smap = {}, slist = [];
+      SCOPED.forEach(function (f) { if (base[f] && B[f] && base[f] !== B[f]) { smap[base[f]] = B[f]; slist.push(base[f]); } });
+      if (slist.length) {
+        slist.sort(function (a, b) { return b.length - a.length; });
+        var sre = new RegExp(slist.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'g');
+        var sfix = function (str) { return str.replace(sre, function (m) { return smap[m]; }); };
+        document.querySelectorAll('[data-brand-area]').forEach(function (el) {
+          var tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), tn;
+          while ((tn = tw.nextNode())) { var tv = sfix(tn.nodeValue); if (tv !== tn.nodeValue) tn.nodeValue = tv; }
+          ATTRS.forEach(function (a) { var o2 = el.getAttribute(a); if (o2) { var v3 = sfix(o2); if (v3 !== o2) el.setAttribute(a, v3); } });
+        });
+      }
+    }
+    /* the tower photo: hidden when the client sits in another building */
+    if (B.towerPhoto === '') document.querySelectorAll('[data-brand-tower-photo]').forEach(function (f) { f.remove(); });
     /* the reception photo */
     document.querySelectorAll('[data-brand-photo]').forEach(function (fig) {
       var im = fig.querySelector('img'), cap = fig.querySelector('figcaption');

@@ -4,7 +4,7 @@ import * as THREE from '../../vendor/three/three.module.min.js';
 import { remap, sampleTrack } from './timeline.js';
 import { makeIntro, loadWordFont, T as IT } from './intro.js?v=20261020-1';
 import { makeLens } from './lens.js';
-import { makeLabels } from './labels.js';
+import { makeLabels } from './labels.js?v=20261024-2';
 
 const D2R = Math.PI / 180;
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };

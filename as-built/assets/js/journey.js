@@ -375,7 +375,7 @@ updateLive();
 function resolveReadyLater(ok) { if (ok) resolveReady(); else rejectReady(new Error('scene unavailable: ' + mode)); }
 async function loadScene() {
   try {
-    const mod = await import('./journey/scene.js?v=20261020-1');
+    const mod = await import('./journey/scene.js?v=20261024-2');
     api = await mod.start(J);
     Object.assign(LHScene, api, { ready });
     sceneLive = true;
